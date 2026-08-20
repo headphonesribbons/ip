@@ -1,5 +1,3 @@
-package computa;
-
 /**
  * Represents an input error specific to Computa.
  */

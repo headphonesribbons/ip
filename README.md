@@ -35,7 +35,7 @@ Date and time values are currently stored as text, so inputs such as `Sunday`,
 ## Running in IntelliJ IDEA
 
 Use JDK 25 and open this repository as an IntelliJ IDEA project. Then open
-`src/main/java/computa/Computa.java` and run `computa.Computa.main()`.
+`src/main/java/Computa.java` and run `Computa.main()`.
 
 ## Running from a terminal
 
@@ -43,8 +43,8 @@ From the repository root, compile and run with Java 25:
 
 ```powershell
 New-Item -ItemType Directory -Force _temp\classes | Out-Null
-javac -encoding UTF-8 -d _temp\classes src\main\java\computa\*.java
-java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -cp _temp\classes computa.Computa
+javac -encoding UTF-8 -d _temp\classes src\main\java\*.java
+java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp\classes Computa
 ```
 
 ## UI tests
@@ -62,10 +62,10 @@ compares actual output with the expected output, and stops at the first failure.
 
 ## Project structure
 
-- `src/main/java/computa/Computa.java` — command loop and task management.
-- `src/main/java/computa/Task.java` — base task class.
-- `src/main/java/computa/Todo.java` — todo task type.
-- `src/main/java/computa/Deadline.java` — deadline task type.
-- `src/main/java/computa/Event.java` — event task type.
-- `src/main/java/computa/ComputaException.java` — user-input error type.
+- `src/main/java/Computa.java` — command loop and task management.
+- `src/main/java/Task.java` — base task class.
+- `src/main/java/Todo.java` — todo task type.
+- `src/main/java/Deadline.java` — deadline task type.
+- `src/main/java/Event.java` — event task type.
+- `src/main/java/ComputaException.java` — user-input error type.
 - `test/ui-test-plan.md` — UI test cases and expected transcripts.

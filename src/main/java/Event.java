@@ -1,5 +1,3 @@
-package computa;
-
 /**
  * A task with a specified start and end date or time.
  */

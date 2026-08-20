@@ -1,7 +1,7 @@
 # Computa UI test plan
 
-- Program command: `java -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -cp _temp/ui-test-classes computa.Computa`
-- Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/computa/*.java`
+- Program command: `java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp/ui-test-classes Computa`
+- Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/*.java`
 - Working directory: `.`
 - Timeout seconds: `10`
 

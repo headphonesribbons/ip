@@ -1,5 +1,3 @@
-package computa;
-
 /**
  * Represents one task in Computa's in-memory task list.
  */
