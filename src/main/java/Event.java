@@ -24,4 +24,5 @@ public class Event extends Task {
     public String getDisplayDescription() {
         return description + " (from: " + from + " to: " + to + ")";
     }
+
 }

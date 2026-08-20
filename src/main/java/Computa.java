@@ -33,16 +33,23 @@ public class Computa {
                 break;
             }
 
-            if (command.equals("list")) {
-                printTasks(tasks, taskCount);
-            } else if (command.startsWith("mark ")) {
-                updateTaskStatus(command, tasks, true);
-            } else if (command.startsWith("unmark ")) {
-                updateTaskStatus(command, tasks, false);
-            } else if (taskCount < MAX_TASKS) {
-                tasks[taskCount] = createTask(command);
-                taskCount++;
-                printAddedTask(tasks[taskCount - 1], taskCount);
+            try {
+                if (command.equals("list")) {
+                    printTasks(tasks, taskCount);
+                } else if (command.equals("mark") || command.startsWith("mark ")) {
+                    updateTaskStatus(command, tasks, taskCount, true);
+                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                    updateTaskStatus(command, tasks, taskCount, false);
+                } else {
+                    if (taskCount >= MAX_TASKS) {
+                        throw new ComputaException("Your task list is full. Please complete some tasks first.");
+                    }
+                    tasks[taskCount] = createTask(command);
+                    taskCount++;
+                    printAddedTask(tasks[taskCount - 1], taskCount);
+                }
+            } catch (ComputaException exception) {
+                System.out.println(exception.getMessage());
             }
             System.out.println(SEPARATOR);
         }
@@ -61,30 +68,47 @@ public class Computa {
     }
 
     /** Creates a task object from a todo, deadline, or event command. */
-    private static Task createTask(String command) {
-        if (command.startsWith("todo ")) {
-            return new Todo(command.substring("todo ".length()).trim());
+    private static Task createTask(String command) throws ComputaException {
+        if (command.equals("todo") || command.startsWith("todo ")) {
+            String description = command.substring("todo".length()).trim();
+            if (description.isEmpty()) {
+                throw new ComputaException("Hmph! This is just an excuse to hang out with me, right?\n"
+                        + "Who says you get to spend empty time with me? ୧( ˵ ° ~ ° ˵ )୨");
+            }
+            return new Todo(description);
         }
 
-        if (command.startsWith("deadline ")) {
-            String details = command.substring("deadline ".length());
+        if (command.equals("deadline") || command.startsWith("deadline ")) {
+            String details = command.substring("deadline".length()).trim();
             int byIndex = details.indexOf("/by");
+            if (byIndex < 0) {
+                throw new ComputaException("A deadline needs a description and a /by date or time.");
+            }
             String description = details.substring(0, byIndex).trim();
             String by = details.substring(byIndex + "/by".length()).trim();
+            if (description.isEmpty() || by.isEmpty()) {
+                throw new ComputaException("A deadline needs a description and a /by date or time.");
+            }
             return new Deadline(description, by);
         }
 
-        if (command.startsWith("event ")) {
-            String details = command.substring("event ".length());
+        if (command.equals("event") || command.startsWith("event ")) {
+            String details = command.substring("event".length()).trim();
             int fromIndex = details.indexOf("/from");
             int toIndex = details.indexOf("/to", fromIndex + 1);
+            if (fromIndex < 0 || toIndex < 0) {
+                throw new ComputaException("An event needs a description, /from date or time, and /to date or time.");
+            }
             String description = details.substring(0, fromIndex).trim();
             String from = details.substring(fromIndex + "/from".length(), toIndex).trim();
             String to = details.substring(toIndex + "/to".length()).trim();
+            if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+                throw new ComputaException("An event needs a description, /from date or time, and /to date or time.");
+            }
             return new Event(description, from, to);
         }
 
-        return new Todo(command);
+        throw new ComputaException("Hmph! Making small talk won't get you anywhere.  ʕ ꈍᴥꈍʔ");
     }
 
     /** Prints the acknowledgement shown after adding a task. */
@@ -102,13 +126,31 @@ public class Computa {
      * @param tasks stored tasks
      * @param isMark true to mark the task, false to unmark it
      */
-    private static void updateTaskStatus(String command, Task[] tasks, boolean isMark) {
-        String[] parts = command.split(" ");
-        int taskIndex = Integer.parseInt(parts[1]) - 1;
+    private static void updateTaskStatus(String command, Task[] tasks, int taskCount, boolean isMark)
+            throws ComputaException {
+        String[] parts = command.trim().split("\\s+");
+        if (parts.length != 2) {
+            throw new ComputaException("Please provide a valid task number.");
+        }
+
+        int taskIndex;
+        try {
+            taskIndex = Integer.parseInt(parts[1]) - 1;
+        } catch (NumberFormatException exception) {
+            throw new ComputaException("Please provide a valid task number.");
+        }
+        if (taskIndex < 0 || taskIndex >= taskCount) {
+            throw new ComputaException("Please provide a valid task number.");
+        }
+
         if (isMark) {
             tasks[taskIndex].markAsDone();
+            System.out.println("Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿)");
         } else {
             tasks[taskIndex].markAsUndone();
+            System.out.println("Gambare, Goshujin-Sama ! ˚‧º·( 。ᗒ ‸ ◕✿)");
         }
+        System.out.println("  [" + tasks[taskIndex].getStatusIcon() + "] "
+                + tasks[taskIndex].getDisplayDescription());
     }
 }
