@@ -35,6 +35,10 @@ public class Computa {
 
             if (command.equals("list")) {
                 printTasks(tasks, taskCount);
+            } else if (command.startsWith("mark ")) {
+                updateTaskStatus(command, tasks, true);
+            } else if (command.startsWith("unmark ")) {
+                updateTaskStatus(command, tasks, false);
             } else if (taskCount < MAX_TASKS) {
                 tasks[taskCount] = new Task(command);
                 taskCount++;
@@ -53,6 +57,23 @@ public class Computa {
     private static void printTasks(Task[] tasks, int taskCount) {
         for (int i = 0; i < taskCount; i++) {
             System.out.println((i + 1) + ". " + tasks[i]);
+        }
+    }
+
+    /**
+     * Marks or unmarks a task selected by its one-based number.
+     *
+     * @param command the complete mark or unmark command
+     * @param tasks stored tasks
+     * @param isMark true to mark the task, false to unmark it
+     */
+    private static void updateTaskStatus(String command, Task[] tasks, boolean isMark) {
+        String[] parts = command.split(" ");
+        int taskIndex = Integer.parseInt(parts[1]) - 1;
+        if (isMark) {
+            tasks[taskIndex].markAsDone();
+        } else {
+            tasks[taskIndex].markAsUndone();
         }
     }
 }
