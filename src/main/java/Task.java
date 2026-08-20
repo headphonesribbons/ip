@@ -46,6 +46,16 @@ public class Task {
         return description;
     }
 
+    /** Returns the one-letter icon for this task type. */
+    public String getTypeIcon() {
+        return "T";
+    }
+
+    /** Returns the description and any date/time details for this task. */
+    public String getDisplayDescription() {
+        return description;
+    }
+
     /**
      * Formats this task for display.
      *
@@ -53,6 +63,6 @@ public class Task {
      */
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getTypeIcon() + "][" + getStatusIcon() + "] " + getDisplayDescription();
     }
 }
