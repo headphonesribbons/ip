@@ -1,3 +1,5 @@
+package computa;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,7 +13,7 @@ public class Computa {
     /**
      * Prints Computa's greeting, then processes commands until {@code bye} is entered.
      *
-     * @param args command-line arguments, which are not used
+     * @param args command-line arguments, which are not used.
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -59,7 +61,7 @@ public class Computa {
     /**
      * Prints all tasks and their completion status.
      *
-     * @param tasks stored tasks
+     * @param tasks stored tasks.
      */
     private static void printTasks(ArrayList<Task> tasks) {
         System.out.println("We've got so much to do (⋟﹏⋞)");
@@ -73,9 +75,9 @@ public class Computa {
     /**
      * Creates a task object from a todo, deadline, or event command.
      *
-     * @param command complete command entered by the user
-     * @return the corresponding task
-     * @throws ComputaException if the command is malformed or unknown
+     * @param command complete command entered by the user.
+     * @return the corresponding task.
+     * @throws ComputaException if the command is malformed or unknown.
      */
     private static Task createTask(String command) throws ComputaException {
         if (command.equals("todo") || command.startsWith("todo ")) {
@@ -123,8 +125,8 @@ public class Computa {
     /**
      * Prints the acknowledgement shown after a task is added.
      *
-     * @param task newly added task
-     * @param taskCount number of tasks after adding the task
+     * @param task newly added task.
+     * @param taskCount number of tasks after adding the task.
      */
     private static void printAddedTask(Task task, int taskCount) {
         System.out.println("More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७");
@@ -136,9 +138,9 @@ public class Computa {
     /**
      * Marks or unmarks a task selected by its one-based number.
      *
-     * @param command the complete mark or unmark command
-     * @param tasks stored tasks
-     * @param isMark true to mark the task, false to unmark it
+     * @param command the complete mark or unmark command.
+     * @param tasks stored tasks.
+     * @param isMark true to mark the task, false to unmark it.
      */
     private static void updateTaskStatus(String command, ArrayList<Task> tasks, boolean isMark)
             throws ComputaException {
@@ -172,9 +174,9 @@ public class Computa {
     /**
      * Deletes a task selected by its one-based number.
      *
-     * @param command the complete delete command
-     * @param tasks stored tasks
-     * @throws ComputaException if the command does not contain a valid task number
+     * @param command the complete delete command.
+     * @param tasks stored tasks.
+     * @throws ComputaException if the command does not contain a valid task number.
      */
     private static void deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
         String[] parts = command.trim().split("\\s+");

@@ -1,3 +1,5 @@
+package computa;
+
 /**
  * Represents one task in Computa's in-memory task list.
  */
@@ -11,7 +13,7 @@ public class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description text describing the task
+     * @param description text describing the task.
      */
     public Task(String description) {
         this.description = description;
@@ -31,7 +33,7 @@ public class Task {
     /**
      * Returns the status icon used when displaying this task.
      *
-     * @return {@code X} for a completed task, or a space otherwise
+     * @return {@code X} for a completed task, or a space otherwise.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -40,7 +42,7 @@ public class Task {
     /**
      * Returns the task description.
      *
-     * @return the description entered by the user
+     * @return the description entered by the user.
      */
     public String getDescription() {
         return description;
@@ -49,7 +51,7 @@ public class Task {
     /**
      * Returns the type icon for this task.
      *
-     * @return the one-letter icon used in task lists
+     * @return the one-letter icon used in task lists.
      */
     public String getTypeIcon() {
         return "T";
@@ -58,7 +60,7 @@ public class Task {
     /**
      * Returns the description and any date/time details for display outside a list.
      *
-     * @return the task's display description
+     * @return the task's display description.
      */
     public String getDisplayDescription() {
         return description;
@@ -67,7 +69,7 @@ public class Task {
     /**
      * Formats this task for display in a task list.
      *
-     * @return type icon, completion icon, and description
+     * @return type icon, completion icon, and description.
      */
     @Override
     public String toString() {

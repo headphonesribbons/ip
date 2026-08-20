@@ -1,3 +1,5 @@
+package computa;
+
 /**
  * A task with a specified start and end date or time.
  */
@@ -11,9 +13,9 @@ public class Event extends Task {
     /**
      * Creates an incomplete event task.
      *
-     * @param description text describing the event
-     * @param from date or time when the event starts
-     * @param to date or time when the event ends
+     * @param description text describing the event.
+     * @param from date or time when the event starts.
+     * @param to date or time when the event ends.
      */
     public Event(String description, String from, String to) {
         super(description);
@@ -24,7 +26,7 @@ public class Event extends Task {
     /**
      * Formats this event for display in a task list.
      *
-     * @return type icon, completion icon, description, and event range
+     * @return type icon, completion icon, description, and event range.
      */
     @Override
     public String toString() {

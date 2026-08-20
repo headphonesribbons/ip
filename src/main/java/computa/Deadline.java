@@ -1,3 +1,5 @@
+package computa;
+
 /**
  * A task that must be completed by a specified date or time.
  */
@@ -8,8 +10,8 @@ public class Deadline extends Task {
     /**
      * Creates an incomplete deadline task.
      *
-     * @param description text describing the task
-     * @param by date or time by which the task should be completed
+     * @param description text describing the task.
+     * @param by date or time by which the task should be completed.
      */
     public Deadline(String description, String by) {
         super(description);
@@ -19,7 +21,7 @@ public class Deadline extends Task {
     /**
      * Formats this deadline for display in a task list.
      *
-     * @return type icon, completion icon, description, and deadline
+     * @return type icon, completion icon, description, and deadline.
      */
     @Override
     public String toString() {
