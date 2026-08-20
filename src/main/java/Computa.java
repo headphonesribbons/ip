@@ -1,20 +1,21 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * A minimal chatbot that echoes commands until the user says goodbye.
+ * A minimal chatbot that stores tasks and displays them when requested.
  */
 public class Computa {
-
-    /** Maximum number of tasks supported before the collection upgrade. */
-    private static final int MAX_TASKS = 100;
-
     /** Separates the greeting and each command response in the console output. */
     private static final String SEPARATOR = "____________________________________________________________";
 
+    /**
+     * Prints Computa's greeting, then processes commands until {@code bye} is entered.
+     *
+     * @param args command-line arguments, which are not used
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
 
         System.out.println(SEPARATOR);
         System.out.println("                         COMPUTA");
@@ -35,39 +36,47 @@ public class Computa {
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks, taskCount);
+                    printTasks(tasks);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    updateTaskStatus(command, tasks, taskCount, true);
+                    updateTaskStatus(command, tasks, true);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    updateTaskStatus(command, tasks, taskCount, false);
+                    updateTaskStatus(command, tasks, false);
+                } else if (command.equals("delete") || command.startsWith("delete ")) {
+                    deleteTask(command, tasks);
                 } else {
-                    if (taskCount >= MAX_TASKS) {
-                        throw new ComputaException("Your task list is full. Please complete some tasks first.");
-                    }
-                    tasks[taskCount] = createTask(command);
-                    taskCount++;
-                    printAddedTask(tasks[taskCount - 1], taskCount);
+                    Task newTask = createTask(command);
+                    tasks.add(newTask);
+                    printAddedTask(newTask, tasks.size());
                 }
             } catch (ComputaException exception) {
                 System.out.println(exception.getMessage());
             }
+
             System.out.println(SEPARATOR);
         }
     }
 
     /**
-     * Prints all tasks with their one-based list numbers.
+     * Prints all tasks and their completion status.
      *
      * @param tasks stored tasks
-     * @param taskCount number of tasks currently stored
      */
-    private static void printTasks(Task[] tasks, int taskCount) {
-        for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + tasks[i]);
+    private static void printTasks(ArrayList<Task> tasks) {
+        System.out.println("We've got so much to do (⋟﹏⋞)");
+        System.out.println("Hmph! I guess I'll have to spend more time with you "
+                + "(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println((i + 1) + "." + tasks.get(i));
         }
     }
 
-    /** Creates a task object from a todo, deadline, or event command. */
+    /**
+     * Creates a task object from a todo, deadline, or event command.
+     *
+     * @param command complete command entered by the user
+     * @return the corresponding task
+     * @throws ComputaException if the command is malformed or unknown
+     */
     private static Task createTask(String command) throws ComputaException {
         if (command.equals("todo") || command.startsWith("todo ")) {
             String description = command.substring("todo".length()).trim();
@@ -111,7 +120,12 @@ public class Computa {
         throw new ComputaException("Hmph! Making small talk won't get you anywhere.  ʕ ꈍᴥꈍʔ");
     }
 
-    /** Prints the acknowledgement shown after adding a task. */
+    /**
+     * Prints the acknowledgement shown after a task is added.
+     *
+     * @param task newly added task
+     * @param taskCount number of tasks after adding the task
+     */
     private static void printAddedTask(Task task, int taskCount) {
         System.out.println("More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७");
         System.out.println("  " + task);
@@ -126,31 +140,62 @@ public class Computa {
      * @param tasks stored tasks
      * @param isMark true to mark the task, false to unmark it
      */
-    private static void updateTaskStatus(String command, Task[] tasks, int taskCount, boolean isMark)
+    private static void updateTaskStatus(String command, ArrayList<Task> tasks, boolean isMark)
             throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
             throw new ComputaException("Please provide a valid task number.");
         }
 
-        int taskIndex;
         try {
-            taskIndex = Integer.parseInt(parts[1]) - 1;
+            int taskNumber = Integer.parseInt(parts[1]);
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
+                throw new ComputaException("Please provide a valid task number.");
+            }
+
+            int taskIndex = taskNumber - 1;
+            Task task = tasks.get(taskIndex);
+            if (isMark) {
+                task.markAsDone();
+                System.out.println("Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿) \n");
+            } else {
+                task.markAsUndone();
+                System.out.println("Gambare, Goshujin-Sama ! ˚‧º·( 。ᗒ ‸ ◕✿) \n");
+            }
+            System.out.println("  [" + task.getStatusIcon() + "] "
+                    + task.getDisplayDescription());
         } catch (NumberFormatException exception) {
             throw new ComputaException("Please provide a valid task number.");
         }
-        if (taskIndex < 0 || taskIndex >= taskCount) {
+    }
+
+    /**
+     * Deletes a task selected by its one-based number.
+     *
+     * @param command the complete delete command
+     * @param tasks stored tasks
+     * @throws ComputaException if the command does not contain a valid task number
+     */
+    private static void deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
+        String[] parts = command.trim().split("\\s+");
+        if (parts.length != 2) {
             throw new ComputaException("Please provide a valid task number.");
         }
 
-        if (isMark) {
-            tasks[taskIndex].markAsDone();
-            System.out.println("Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿)");
-        } else {
-            tasks[taskIndex].markAsUndone();
-            System.out.println("Gambare, Goshujin-Sama ! ˚‧º·( 。ᗒ ‸ ◕✿)");
+        try {
+            int taskNumber = Integer.parseInt(parts[1]);
+            if (taskNumber < 1 || taskNumber > tasks.size()) {
+                throw new ComputaException("Please provide a valid task number.");
+            }
+
+            Task deletedTask = tasks.remove(taskNumber - 1);
+            System.out.println("Goshujin-Sama, you don't want to do this with me anymore? "
+                    + "(๑˃̣̣̥⌓˂̣̣̥)");
+            System.out.println("  " + deletedTask);
+            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+            System.out.println("Not that I want to hang out with you anyway. (๑•́ ₃ •̀๑)");
+        } catch (NumberFormatException exception) {
+            throw new ComputaException("Please provide a valid task number.");
         }
-        System.out.println("  [" + tasks[taskIndex].getStatusIcon() + "] "
-                + tasks[taskIndex].getDisplayDescription());
     }
 }

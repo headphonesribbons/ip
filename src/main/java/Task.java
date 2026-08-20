@@ -9,7 +9,7 @@ public class Task {
     protected boolean isDone;
 
     /**
-     * Creates a task with the given description.
+     * Creates an incomplete task with the given description.
      *
      * @param description text describing the task
      */
@@ -29,7 +29,7 @@ public class Task {
     }
 
     /**
-     * Returns the completion icon used when displaying this task.
+     * Returns the status icon used when displaying this task.
      *
      * @return {@code X} for a completed task, or a space otherwise
      */
@@ -46,20 +46,28 @@ public class Task {
         return description;
     }
 
-    /** Returns the one-letter icon for this task type. */
+    /**
+     * Returns the type icon for this task.
+     *
+     * @return the one-letter icon used in task lists
+     */
     public String getTypeIcon() {
         return "T";
     }
 
-    /** Returns the description and any date/time details for this task. */
+    /**
+     * Returns the description and any date/time details for display outside a list.
+     *
+     * @return the task's display description
+     */
     public String getDisplayDescription() {
         return description;
     }
 
     /**
-     * Formats this task for display.
+     * Formats this task for display in a task list.
      *
-     * @return the task description
+     * @return type icon, completion icon, and description
      */
     @Override
     public String toString() {

@@ -24,6 +24,15 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## UI testing after code changes
+
+After every code update, review `test/ui-test-plan.md` and update it when the
+change adds, removes, or alters user-visible behavior. Then invoke the
+project-specific `test-ui` skill to run the documented UI test plan before
+handing the change back to the user. If a UI test fails, stop and report the
+actual and expected output; do not silently change the expected output to make
+the test pass.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
