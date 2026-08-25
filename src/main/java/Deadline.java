@@ -16,6 +16,11 @@ public class Deadline extends Task {
         this.by = by;
     }
 
+    @Override
+    public String toFileFormat() {
+        return "D" + super.toFileFormat() + " | " + this.by;
+    }
+
     /**
      * Formats this deadline for display in a task list.
      *

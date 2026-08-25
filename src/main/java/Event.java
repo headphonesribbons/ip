@@ -21,6 +21,12 @@ public class Event extends Task {
         this.to = to;
     }
 
+    @Override
+    public String toFileFormat() {
+        return "E" + super.toFileFormat() + " | " + this.from + " | " + this.to;
+    }
+
+
     /**
      * Formats this event for display in a task list.
      *

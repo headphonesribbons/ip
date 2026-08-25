@@ -8,6 +8,10 @@ public class Task {
     /** Whether this task has been completed. */
     protected boolean isDone;
 
+    public String toFileFormat() {
+        return " | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
     /**
      * Creates an incomplete task with the given description.
      *
