@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,14 +10,18 @@ public class Computa {
     /** Separates the greeting and each command response in the console output. */
     private static final String SEPARATOR = "____________________________________________________________";
 
-    /**
-     * Prints Computa's greeting, then processes commands until {@code bye} is entered.
-     *
-     * @param args command-line arguments, which are not used.
-     */
-    public static void main(String[] args) {
+    private String filePath = "." + File.separator + "data" + File.separator + "computa.txt";
+    private Storage storage;
+    private ArrayList<Task> tasks;
+
+    public Computa() {
+        storage = new Storage(filePath);
+        tasks = new ArrayList<>();
+        storage.initialiseDataFile();
+    }
+
+    public void run() {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
 
         System.out.println(SEPARATOR);
         System.out.println("                         COMPUTA");
@@ -57,6 +63,15 @@ public class Computa {
     }
 
     /**
+     * Prints Computa's greeting, then processes commands until {@code bye} is entered.
+     *
+     * @param args command-line arguments, which are not used.
+     */
+    public static void main(String[] args) {
+        new Computa().run();
+    }
+
+    /**
      * Prints all tasks and their completion status.
      *
      * @param tasks stored tasks.
@@ -91,12 +106,12 @@ public class Computa {
             String details = command.substring("deadline".length()).trim();
             int byIndex = details.indexOf("/by");
             if (byIndex < 0) {
-                throw new ComputaException("A deadline needs a description and a /by date or time.");
+                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
             }
             String description = details.substring(0, byIndex).trim();
             String by = details.substring(byIndex + "/by".length()).trim();
             if (description.isEmpty() || by.isEmpty()) {
-                throw new ComputaException("A deadline needs a description and a /by date or time.");
+                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
             }
             return new Deadline(description, by);
         }
@@ -106,13 +121,13 @@ public class Computa {
             int fromIndex = details.indexOf("/from");
             int toIndex = details.indexOf("/to", fromIndex + 1);
             if (fromIndex < 0 || toIndex < 0) {
-                throw new ComputaException("An event needs a description, /from date or time, and /to date or time.");
+                throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
             }
             String description = details.substring(0, fromIndex).trim();
             String from = details.substring(fromIndex + "/from".length(), toIndex).trim();
             String to = details.substring(toIndex + "/to".length()).trim();
             if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new ComputaException("An event needs a description, /from date or time, and /to date or time.");
+                throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
             }
             return new Event(description, from, to);
         }
@@ -144,13 +159,13 @@ public class Computa {
             throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
 
         try {
             int taskNumber = Integer.parseInt(parts[1]);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new ComputaException("Please provide a valid task number.");
+                throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
             }
 
             int taskIndex = taskNumber - 1;
@@ -165,7 +180,7 @@ public class Computa {
             System.out.println("  [" + task.getStatusIcon() + "] "
                     + task.getDisplayDescription());
         } catch (NumberFormatException exception) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
     }
 
@@ -179,13 +194,13 @@ public class Computa {
     private static void deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
 
         try {
             int taskNumber = Integer.parseInt(parts[1]);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new ComputaException("Please provide a valid task number.");
+                throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
             }
 
             Task deletedTask = tasks.remove(taskNumber - 1);
@@ -195,7 +210,7 @@ public class Computa {
             System.out.println("Now you have " + tasks.size() + " tasks in the list.");
             System.out.println("Not that I want to hang out with you anyway. (๑•́ ₃ •̀๑)");
         } catch (NumberFormatException exception) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
     }
 }
