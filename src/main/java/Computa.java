@@ -8,66 +8,64 @@ import java.util.Scanner;
  * A minimal chatbot that stores tasks and displays them when requested.
  */
 public class Computa {
-    /** Separates the greeting and each command response in the console output. */
-    private static final String SEPARATOR = "____________________________________________________________";
     /** Relative path of the file used to store tasks. */
     private static final String FILE_PATH = "." + File.separator + "data" + File.separator + "computa.txt";
 
     private final Storage storage;
     private final ArrayList<Task> tasks;
+    private final Ui ui;
 
     /** Creates an empty task list and prepares its data file. */
     public Computa() {
         storage = new Storage(FILE_PATH);
         storage.initialiseDataFile();
         tasks = storage.loadTasks();
+        ui = new Ui();
     }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println(SEPARATOR);
-        System.out.println("                         COMPUTA");
-        System.out.println("Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°");
-        System.out.println("I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)");
-        System.out.println("What can I do for you?");
-        System.out.println(SEPARATOR);
+        ui.showGreeting();
 
         while (scanner.hasNextLine()) {
             String command = scanner.nextLine();
-            System.out.println(SEPARATOR);
+            ui.showSeparator();
 
             if (command.equals("bye")) {
-                System.out.println("Noooo don't go!!! Hmph. Fine... Hope to see you again soon!");
-                System.out.println(SEPARATOR);
+                ui.showFarewell();
+                ui.showSeparator();
                 break;
             }
 
             try {
                 if (command.equals("list")) {
-                    printTasks(tasks);
+                    ui.showTasks(tasks);
                 } else if (command.equals("on") || command.startsWith("on ")) {
-                    printTasksOnDate(command, tasks);
+                    showTasksOnDate(command);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    updateTaskStatus(command, tasks, true);
+                    Task updatedTask = updateTaskStatus(command, tasks, true);
                     storage.saveTasks(tasks);
+                    ui.showStatusUpdate(updatedTask, true);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    updateTaskStatus(command, tasks, false);
+                    Task updatedTask = updateTaskStatus(command, tasks, false);
                     storage.saveTasks(tasks);
+                    ui.showStatusUpdate(updatedTask, false);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    deleteTask(command, tasks);
+                    Task deletedTask = deleteTask(command, tasks);
                     storage.saveTasks(tasks);
+                    ui.showDeletedTask(deletedTask, tasks.size());
                 } else {
                     Task newTask = createTask(command);
                     tasks.add(newTask);
                     storage.saveTasks(tasks);
-                    printAddedTask(newTask, tasks.size());
+                    ui.showAddedTask(newTask, tasks.size());
                 }
             } catch (ComputaException exception) {
-                System.out.println(exception.getMessage());
+                ui.showError(exception.getMessage());
             }
 
-            System.out.println(SEPARATOR);
+            ui.showSeparator();
         }
     }
 
@@ -78,20 +76,6 @@ public class Computa {
      */
     public static void main(String[] args) {
         new Computa().run();
-    }
-
-    /**
-     * Prints all tasks and their completion status.
-     *
-     * @param tasks stored tasks.
-     */
-    private static void printTasks(ArrayList<Task> tasks) {
-        System.out.println("We've got so much to do (⋟﹏⋞)");
-        System.out.println("Hmph! I guess I'll have to spend more time with you "
-                + "(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
-        }
     }
 
     /**
@@ -156,38 +140,15 @@ public class Computa {
         throw new ComputaException("Hmph! Making small talk won't get you anywhere.  ʕ ꈍᴥꈍʔ");
     }
 
-    /**
-     * Prints the acknowledgement shown after a task is added.
-     *
-     * @param task newly added task.
-     * @param taskCount number of tasks after adding the task.
-     */
-    private static void printAddedTask(Task task, int taskCount) {
-        System.out.println("More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list. (⋟﹏⋞)");
-        System.out.println("(.づ◡﹏◡)づ. When will we get some alone time together?");
-    }
-
-    /** Prints deadlines and events that occur on the requested date. */
-    private static void printTasksOnDate(String command, ArrayList<Task> tasks) throws ComputaException {
+    /** Parses a date query and delegates its display to the UI. */
+    private void showTasksOnDate(String command) throws ComputaException {
         String dateText = command.substring("on".length()).trim();
         LocalDate date = DateTimeParser.parseQueryDate(dateText);
         if (date == null) {
             throw new ComputaException("Hmph! Enter a date in yyyy-mm-dd format.");
         }
 
-        System.out.println("Tasks on " + DateTimeParser.formatDateForDisplay(date) + ":");
-        int matchingTaskNumber = 0;
-        for (Task task : tasks) {
-            if (task.occursOn(date)) {
-                matchingTaskNumber++;
-                System.out.println(matchingTaskNumber + "." + task);
-            }
-        }
-        if (matchingTaskNumber == 0) {
-            System.out.println("No deadlines or events found.");
-        }
+        ui.showTasksOnDate(tasks, date);
     }
 
     /**
@@ -197,7 +158,7 @@ public class Computa {
      * @param tasks stored tasks.
      * @param isMark true to mark the task, false to unmark it.
      */
-    private static void updateTaskStatus(String command, ArrayList<Task> tasks, boolean isMark)
+    private static Task updateTaskStatus(String command, ArrayList<Task> tasks, boolean isMark)
             throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
@@ -214,13 +175,10 @@ public class Computa {
             Task task = tasks.get(taskIndex);
             if (isMark) {
                 task.markAsDone();
-                System.out.println("Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿) \n");
             } else {
                 task.markAsUndone();
-                System.out.println("Gambare, Goshujin-Sama ! ˚‧º·( 。ᗒ ‸ ◕✿) \n");
             }
-            System.out.println("  [" + task.getStatusIcon() + "] "
-                    + task.getDisplayDescription());
+            return task;
         } catch (NumberFormatException exception) {
             throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
@@ -233,7 +191,7 @@ public class Computa {
      * @param tasks stored tasks.
      * @throws ComputaException if the command does not contain a valid task number.
      */
-    private static void deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
+    private static Task deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
             throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
@@ -245,12 +203,7 @@ public class Computa {
                 throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
             }
 
-            Task deletedTask = tasks.remove(taskNumber - 1);
-            System.out.println("Goshujin-Sama, you don't want to do this with me anymore? "
-                    + "(๑˃̣̣̥⌓˂̣̣̥)");
-            System.out.println("  " + deletedTask);
-            System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-            System.out.println("Not that I want to hang out with you anyway. (๑•́ ₃ •̀๑)");
+            return tasks.remove(taskNumber - 1);
         } catch (NumberFormatException exception) {
             throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
