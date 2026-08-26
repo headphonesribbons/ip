@@ -1,12 +1,23 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
  * A task with a specified start and end date or time.
  */
 public class Event extends Task {
     /** Date or time when the event starts. */
-    protected String from;
+    protected LocalDateTime from;
+    /** Original start text for free-form values. */
+    private final String fromText;
+    /** Whether the parsed start value includes a time. */
+    private final boolean fromHasTime;
 
     /** Date or time when the event ends. */
-    protected String to;
+    protected LocalDateTime to;
+    /** Original end text for free-form values. */
+    private final String toText;
+    /** Whether the parsed end value includes a time. */
+    private final boolean toHasTime;
 
     /**
      * Creates an incomplete event task.
@@ -17,8 +28,12 @@ public class Event extends Task {
      */
     public Event(String description, String from, String to) {
         super(description);
-        this.from = from;
-        this.to = to;
+        this.fromText = from.trim();
+        this.toText = to.trim();
+        this.from = DateTimeParser.parse(this.fromText);
+        this.to = DateTimeParser.parse(this.toText);
+        this.fromHasTime = DateTimeParser.hasTime(this.fromText);
+        this.toHasTime = DateTimeParser.hasTime(this.toText);
     }
 
     /**
@@ -28,7 +43,7 @@ public class Event extends Task {
      */
     @Override
     public String toFileFormat() {
-        return "E" + super.toFileFormat() + " | " + this.from + " | " + this.to;
+        return "E" + super.toFileFormat() + " | " + getStorageFrom() + " | " + getStorageTo();
     }
 
 
@@ -45,17 +60,34 @@ public class Event extends Task {
     /** Returns the description together with the event range. */
     @Override
     public String getDisplayDescription() {
-        return description + " (from: " + from + " to: " + to + ")";
+        return description + " (from: " + getFrom() + " to: " + getTo() + ")";
     }
 
     /** Returns the event start text. */
     public String getFrom() {
-        return from;
+        return from == null ? fromText : DateTimeParser.formatForDisplay(from, fromHasTime);
     }
 
     /** Returns the event end text. */
     public String getTo() {
-        return to;
+        return to == null ? toText : DateTimeParser.formatForDisplay(to, toHasTime);
+    }
+
+    /** Returns whether this event includes the supplied date, inclusively. */
+    @Override
+    public boolean occursOn(LocalDate date) {
+        return from != null && to != null
+                && !date.isBefore(from.toLocalDate()) && !date.isAfter(to.toLocalDate());
+    }
+
+    /** Returns the normalized start value used when writing this event to disk. */
+    private String getStorageFrom() {
+        return from == null ? fromText : DateTimeParser.formatForStorage(from, fromHasTime);
+    }
+
+    /** Returns the normalized end value used when writing this event to disk. */
+    private String getStorageTo() {
+        return to == null ? toText : DateTimeParser.formatForStorage(to, toHasTime);
     }
 
     /** Returns the event type icon. */

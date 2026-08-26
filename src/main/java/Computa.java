@@ -1,4 +1,6 @@
 import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -44,6 +46,8 @@ public class Computa {
             try {
                 if (command.equals("list")) {
                     printTasks(tasks);
+                } else if (command.equals("on") || command.startsWith("on ")) {
+                    printTasksOnDate(command, tasks);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     updateTaskStatus(command, tasks, true);
                     storage.saveTasks(tasks);
@@ -118,6 +122,9 @@ public class Computa {
             if (description.isEmpty() || by.isEmpty()) {
                 throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
             }
+            if (DateTimeParser.looksLikeDate(by) && DateTimeParser.parse(by) == null) {
+                throw new ComputaException("Hmph! I can't understand that deadline date. Use yyyy-mm-dd.");
+            }
             return new Deadline(description, by);
         }
 
@@ -133,6 +140,15 @@ public class Computa {
             String to = details.substring(toIndex + "/to".length()).trim();
             if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
                 throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
+            }
+            if ((DateTimeParser.looksLikeDate(from) && DateTimeParser.parse(from) == null)
+                    || (DateTimeParser.looksLikeDate(to) && DateTimeParser.parse(to) == null)) {
+                throw new ComputaException("Hmph! I can't understand that event date. Use yyyy-mm-dd.");
+            }
+            LocalDateTime parsedFrom = DateTimeParser.parse(from);
+            LocalDateTime parsedTo = DateTimeParser.parse(to);
+            if (parsedFrom != null && parsedTo != null && parsedFrom.isAfter(parsedTo)) {
+                throw new ComputaException("Hmph! An event cannot end before it starts.");
             }
             return new Event(description, from, to);
         }
@@ -151,6 +167,27 @@ public class Computa {
         System.out.println("  " + task);
         System.out.println("Now you have " + taskCount + " tasks in the list. (⋟﹏⋞)");
         System.out.println("(.づ◡﹏◡)づ. When will we get some alone time together?");
+    }
+
+    /** Prints deadlines and events that occur on the requested date. */
+    private static void printTasksOnDate(String command, ArrayList<Task> tasks) throws ComputaException {
+        String dateText = command.substring("on".length()).trim();
+        LocalDate date = DateTimeParser.parseQueryDate(dateText);
+        if (date == null) {
+            throw new ComputaException("Hmph! Enter a date in yyyy-mm-dd format.");
+        }
+
+        System.out.println("Tasks on " + DateTimeParser.formatDateForDisplay(date) + ":");
+        int matchingTaskNumber = 0;
+        for (Task task : tasks) {
+            if (task.occursOn(date)) {
+                matchingTaskNumber++;
+                System.out.println(matchingTaskNumber + "." + task);
+            }
+        }
+        if (matchingTaskNumber == 0) {
+            System.out.println("No deadlines or events found.");
+        }
     }
 
     /**

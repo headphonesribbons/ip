@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /**
  * Represents one task in Computa's in-memory task list.
  */
@@ -71,6 +73,16 @@ public class Task {
      */
     public String getDisplayDescription() {
         return description;
+    }
+
+    /**
+     * Checks whether this task occurs on a date. ToDos have no date, so they never match.
+     *
+     * @param date date to check.
+     * @return false for a task without date information.
+     */
+    public boolean occursOn(LocalDate date) {
+        return false;
     }
 
     /**

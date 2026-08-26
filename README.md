@@ -7,8 +7,9 @@ completion status, deletion, and friendly handling of invalid input.
 ## Features
 
 - Todos without date or time information.
-- Deadlines with a free-form due date or time.
-- Events with free-form start and end date or time.
+- Deadlines with free-form or ISO due dates/times.
+- Events with free-form or ISO start and end dates/times.
+- Human-readable formatting and date queries for parsed ISO dates.
 - List tasks with their type and completion status.
 - Mark and unmark tasks.
 - Delete tasks by their list number.
@@ -26,13 +27,18 @@ Malformed records are skipped so corrupted data does not prevent startup.
 | `deadline <description> /by <date/time>` | `deadline submit report /by Friday` | Add a deadline. |
 | `event <description> /from <start> /to <end>` | `event project meeting /from Mon 2pm /to 4pm` | Add an event. |
 | `list` | `list` | Display all tasks. |
+| `on <yyyy-mm-dd>` | `on 2019-10-15` | Display deadlines and events occurring on a date. |
 | `mark <number>` | `mark 1` | Mark a task as completed. |
 | `unmark <number>` | `unmark 1` | Mark a task as incomplete. |
 | `delete <number>` | `delete 2` | Remove a task from the list. |
 | `bye` | `bye` | Exit Computa. |
 
-Date and time values are currently stored as text, so inputs such as `Sunday`,
-`11/10/2019 5pm`, or `Mon 2pm` are accepted without conversion.
+ISO dates (`yyyy-mm-dd`) and date-times (`yyyy-mm-dd HHmm` or ISO date-time
+format) are stored as `java.time.LocalDateTime` values. The earlier
+`d/M/yyyy HHmm` notation is also accepted. Parsed values are displayed as, for
+example, `Oct 15 2019` or `Oct 15 2019 1800`. Free-form values such as `Sunday`
+or `Mon 2pm` remain supported as text. The `on` command finds matching
+deadlines and events; events match every date from their start through end date.
 
 ## Running in IntelliJ IDEA
 
@@ -69,6 +75,7 @@ compares actual output with the expected output, and stops at the first failure.
 - `src/main/java/Todo.java` — todo task type.
 - `src/main/java/Deadline.java` — deadline task type.
 - `src/main/java/Event.java` — event task type.
-- `src/main/java/Storage.java` — writes the current task list to disk.
+- `src/main/java/Storage.java` — writes and loads the task list to disk.
+- `src/main/java/DateTimeParser.java` — parses and formats supported dates.
 - `src/main/java/ComputaException.java` — user-input error type.
 - `test/ui-test-plan.md` — UI test cases and expected transcripts.
