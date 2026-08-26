@@ -32,10 +32,19 @@ public class Computa {
             String command = scanner.nextLine();
             ui.showSeparator();
 
-            if (command.equals("bye")) {
-                ui.showFarewell();
+            Command parsedCommand = Parser.parse(command);
+            if (parsedCommand != null) {
+                try {
+                    parsedCommand.execute(tasks, ui, storage);
+                } catch (ComputaException exception) {
+                    ui.showError(exception.getMessage());
+                }
+                if (parsedCommand.isExit()) {
+                    ui.showSeparator();
+                    break;
+                }
                 ui.showSeparator();
-                break;
+                continue;
             }
 
             try {

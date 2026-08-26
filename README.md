@@ -76,6 +76,9 @@ compares actual output with the expected output, and stops at the first failure.
 - `src/main/java/Deadline.java` — deadline task type.
 - `src/main/java/Event.java` — event task type.
 - `src/main/java/Ui.java` — console output and user-facing messages.
+- `src/main/java/Command.java` — base type for executable commands.
+- `src/main/java/ExitCommand.java` — command that ends a session.
+- `src/main/java/Parser.java` — initial command-to-object conversion.
 - `src/main/java/Storage.java` — writes and loads the task list to disk.
 - `src/main/java/DateTimeParser.java` — parses and formats supported dates.
 - `src/main/java/ComputaException.java` — user-input error type.
