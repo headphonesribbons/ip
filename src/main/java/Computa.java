@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -9,15 +8,17 @@ import java.util.Scanner;
 public class Computa {
     /** Separates the greeting and each command response in the console output. */
     private static final String SEPARATOR = "____________________________________________________________";
+    /** Relative path of the file used to store tasks. */
+    private static final String FILE_PATH = "." + File.separator + "data" + File.separator + "computa.txt";
 
-    private String filePath = "." + File.separator + "data" + File.separator + "computa.txt";
-    private Storage storage;
-    private ArrayList<Task> tasks;
+    private final Storage storage;
+    private final ArrayList<Task> tasks;
 
+    /** Creates an empty task list and prepares its data file. */
     public Computa() {
-        storage = new Storage(filePath);
-        tasks = new ArrayList<>();
+        storage = new Storage(FILE_PATH);
         storage.initialiseDataFile();
+        tasks = storage.loadTasks();
     }
 
     public void run() {
@@ -45,13 +46,17 @@ public class Computa {
                     printTasks(tasks);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     updateTaskStatus(command, tasks, true);
+                    storage.saveTasks(tasks);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     updateTaskStatus(command, tasks, false);
+                    storage.saveTasks(tasks);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
                     deleteTask(command, tasks);
+                    storage.saveTasks(tasks);
                 } else {
                     Task newTask = createTask(command);
                     tasks.add(newTask);
+                    storage.saveTasks(tasks);
                     printAddedTask(newTask, tasks.size());
                 }
             } catch (ComputaException exception) {

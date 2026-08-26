@@ -14,7 +14,9 @@ completion status, deletion, and friendly handling of invalid input.
 - Delete tasks by their list number.
 - Handle malformed or unknown commands without crashing.
 
-Tasks are not saved to disk; they are cleared when Computa exits.
+Tasks are written to `data/computa.txt` whenever the task list changes and
+loaded when Computa starts. Missing folders/files are created automatically.
+Malformed records are skipped so corrupted data does not prevent startup.
 
 ## Commands
 
@@ -67,5 +69,6 @@ compares actual output with the expected output, and stops at the first failure.
 - `src/main/java/Todo.java` — todo task type.
 - `src/main/java/Deadline.java` — deadline task type.
 - `src/main/java/Event.java` — event task type.
+- `src/main/java/Storage.java` — writes the current task list to disk.
 - `src/main/java/ComputaException.java` — user-input error type.
 - `test/ui-test-plan.md` — UI test cases and expected transcripts.

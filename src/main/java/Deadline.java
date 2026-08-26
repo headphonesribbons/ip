@@ -16,6 +16,11 @@ public class Deadline extends Task {
         this.by = by;
     }
 
+    /**
+     * Returns this deadline in the format used by the task data file.
+     *
+     * @return the deadline type, status, description, and due date/time.
+     */
     @Override
     public String toFileFormat() {
         return "D" + super.toFileFormat() + " | " + this.by;

@@ -11,6 +11,11 @@ public class Todo extends Task {
         super(description);
     }
 
+    /**
+     * Returns this todo in the format used by the task data file.
+     *
+     * @return the todo type, status, and description.
+     */
     @Override
     public String toFileFormat() {
         return "T" + super.toFileFormat();

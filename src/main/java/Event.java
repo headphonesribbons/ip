@@ -21,6 +21,11 @@ public class Event extends Task {
         this.to = to;
     }
 
+    /**
+     * Returns this event in the format used by the task data file.
+     *
+     * @return the event type, status, description, and date/time range.
+     */
     @Override
     public String toFileFormat() {
         return "E" + super.toFileFormat() + " | " + this.from + " | " + this.to;

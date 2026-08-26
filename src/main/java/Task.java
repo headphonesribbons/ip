@@ -8,6 +8,11 @@ public class Task {
     /** Whether this task has been completed. */
     protected boolean isDone;
 
+    /**
+     * Returns this task in the format used by the task data file.
+     *
+     * @return status and description fields separated by vertical bars.
+     */
     public String toFileFormat() {
         return " | " + (isDone ? "1" : "0") + " | " + description;
     }
