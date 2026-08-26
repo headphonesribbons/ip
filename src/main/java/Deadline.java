@@ -17,6 +17,16 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns this deadline in the format used by the task data file.
+     *
+     * @return the deadline type, status, description, and due date/time.
+     */
+    @Override
+    public String toFileFormat() {
+        return "D" + super.toFileFormat() + " | " + this.by;
+    }
+
+    /**
      * Formats this deadline for display in a task list.
      *
      * @return type icon, completion icon, description, and deadline.

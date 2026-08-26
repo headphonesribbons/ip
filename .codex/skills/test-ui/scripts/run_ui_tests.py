@@ -19,6 +19,7 @@ class TestCase:
     aim: str
     inputs: str
     expected: str
+    setup: str = ""
 
 
 def _fenced_block(section: str, section_name: str) -> str:
@@ -41,7 +42,7 @@ def parse_plan(plan_path: Path) -> tuple[dict[str, str], list[TestCase]]:
     content = plan_path.read_text(encoding="utf-8")
     metadata: dict[str, str] = {}
     metadata_pattern = (
-        r"^-\s*(Program command|Build command|Working directory|Timeout seconds):\s*(.+)$"
+        r"^-\s*(Program command|Build command|Working directory|Timeout seconds|Reset files):\s*(.+)$"
     )
     for key, value in re.findall(metadata_pattern, content, re.MULTILINE):
         metadata[key] = value.strip().strip("`")
@@ -59,11 +60,22 @@ def parse_plan(plan_path: Path) -> tuple[dict[str, str], list[TestCase]]:
         )
         if not aim_match:
             raise ValueError(f"test case '{match.group(1)}' is missing an Aim section")
+        setup_match = re.search(
+            r"^###\s+Setup\s*$([\s\S]*?)(?=^###\s+|\Z)", section, re.MULTILINE
+        )
+        setup = ""
+        if setup_match:
+            setup_block = re.search(r"```[^\n]*\s*\n([\s\S]*?)\n```", setup_match.group(1))
+            if not setup_block:
+                raise ValueError(f"test case '{match.group(1)}' has an invalid Setup block")
+            setup = setup_block.group(1).strip()
+
         cases.append(TestCase(
             name=match.group(1).strip(),
             aim=aim_match.group(1).strip(),
             inputs=_fenced_block(section, "Inputs"),
             expected=_fenced_block(section, "Expected output"),
+            setup=setup,
         ))
 
     if "Program command" not in metadata:
@@ -99,6 +111,11 @@ def run(plan_path: Path) -> int:
     if not working_directory.is_absolute():
         working_directory = (repo_root / working_directory).resolve()
     timeout = float(metadata.get("Timeout seconds", "10"))
+    reset_files = [
+        Path(item.strip())
+        for item in metadata.get("Reset files", "").split(",")
+        if item.strip()
+    ]
 
     build_command = metadata.get("Build command", "").strip()
     if build_command and build_command.lower() != "none":
@@ -121,6 +138,28 @@ def run(plan_path: Path) -> int:
 
     program_command = metadata["Program command"]
     for case in cases:
+        for reset_file in reset_files:
+            reset_path = reset_file if reset_file.is_absolute() else repo_root / reset_file
+            if reset_path.is_file():
+                reset_path.unlink()
+
+        if case.setup:
+            setup = subprocess.run(
+                case.setup,
+                cwd=working_directory,
+                shell=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout,
+            )
+            if setup.returncode != 0:
+                print(f"Setup failed for '{case.name}'; no UI test was run.", file=sys.stderr)
+                print(setup.stdout, end="")
+                print(setup.stderr, end="", file=sys.stderr)
+                return setup.returncode or 1
+
         try:
             process = subprocess.run(
                 program_command,

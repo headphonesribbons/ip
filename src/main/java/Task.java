@@ -9,6 +9,15 @@ public class Task {
     protected boolean isDone;
 
     /**
+     * Returns this task in the format used by the task data file.
+     *
+     * @return status and description fields separated by vertical bars.
+     */
+    public String toFileFormat() {
+        return " | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
+    /**
      * Creates an incomplete task with the given description.
      *
      * @param description text describing the task.

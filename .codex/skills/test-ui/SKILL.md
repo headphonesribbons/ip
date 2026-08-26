@@ -15,7 +15,12 @@ Maintain `test/ui-test-plan.md` with the project command configuration and one s
 - an `Inputs` fenced `text` block containing the commands sent to one fresh program session, one command per line; and
 - an `Expected output` fenced `text` block containing the exact output expected from that session.
 
-The plan may specify an optional build command, working directory, and timeout. The bundled runner uses the repository root by default and treats output differences other than line-ending style as failures.
+The plan may specify an optional build command, working directory, timeout, and
+comma-separated `Reset files` list. Reset files are removed before each test
+case, which is useful for isolating stateful programs. A test case may also
+include an optional fenced `Setup` command block to seed state before the
+program starts. The bundled runner uses the repository root by default and
+treats output differences other than line-ending style as failures.
 
 ## Run the tests
 

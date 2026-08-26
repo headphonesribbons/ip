@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -7,15 +8,21 @@ import java.util.Scanner;
 public class Computa {
     /** Separates the greeting and each command response in the console output. */
     private static final String SEPARATOR = "____________________________________________________________";
+    /** Relative path of the file used to store tasks. */
+    private static final String FILE_PATH = "." + File.separator + "data" + File.separator + "computa.txt";
 
-    /**
-     * Prints Computa's greeting, then processes commands until {@code bye} is entered.
-     *
-     * @param args command-line arguments, which are not used.
-     */
-    public static void main(String[] args) {
+    private final Storage storage;
+    private final ArrayList<Task> tasks;
+
+    /** Creates an empty task list and prepares its data file. */
+    public Computa() {
+        storage = new Storage(FILE_PATH);
+        storage.initialiseDataFile();
+        tasks = storage.loadTasks();
+    }
+
+    public void run() {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
 
         System.out.println(SEPARATOR);
         System.out.println("                         COMPUTA");
@@ -39,13 +46,17 @@ public class Computa {
                     printTasks(tasks);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
                     updateTaskStatus(command, tasks, true);
+                    storage.saveTasks(tasks);
                 } else if (command.equals("unmark") || command.startsWith("unmark ")) {
                     updateTaskStatus(command, tasks, false);
+                    storage.saveTasks(tasks);
                 } else if (command.equals("delete") || command.startsWith("delete ")) {
                     deleteTask(command, tasks);
+                    storage.saveTasks(tasks);
                 } else {
                     Task newTask = createTask(command);
                     tasks.add(newTask);
+                    storage.saveTasks(tasks);
                     printAddedTask(newTask, tasks.size());
                 }
             } catch (ComputaException exception) {
@@ -54,6 +65,15 @@ public class Computa {
 
             System.out.println(SEPARATOR);
         }
+    }
+
+    /**
+     * Prints Computa's greeting, then processes commands until {@code bye} is entered.
+     *
+     * @param args command-line arguments, which are not used.
+     */
+    public static void main(String[] args) {
+        new Computa().run();
     }
 
     /**
@@ -91,12 +111,12 @@ public class Computa {
             String details = command.substring("deadline".length()).trim();
             int byIndex = details.indexOf("/by");
             if (byIndex < 0) {
-                throw new ComputaException("A deadline needs a description and a /by date or time.");
+                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
             }
             String description = details.substring(0, byIndex).trim();
             String by = details.substring(byIndex + "/by".length()).trim();
             if (description.isEmpty() || by.isEmpty()) {
-                throw new ComputaException("A deadline needs a description and a /by date or time.");
+                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
             }
             return new Deadline(description, by);
         }
@@ -106,13 +126,13 @@ public class Computa {
             int fromIndex = details.indexOf("/from");
             int toIndex = details.indexOf("/to", fromIndex + 1);
             if (fromIndex < 0 || toIndex < 0) {
-                throw new ComputaException("An event needs a description, /from date or time, and /to date or time.");
+                throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
             }
             String description = details.substring(0, fromIndex).trim();
             String from = details.substring(fromIndex + "/from".length(), toIndex).trim();
             String to = details.substring(toIndex + "/to".length()).trim();
             if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new ComputaException("An event needs a description, /from date or time, and /to date or time.");
+                throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
             }
             return new Event(description, from, to);
         }
@@ -144,13 +164,13 @@ public class Computa {
             throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
 
         try {
             int taskNumber = Integer.parseInt(parts[1]);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new ComputaException("Please provide a valid task number.");
+                throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
             }
 
             int taskIndex = taskNumber - 1;
@@ -165,7 +185,7 @@ public class Computa {
             System.out.println("  [" + task.getStatusIcon() + "] "
                     + task.getDisplayDescription());
         } catch (NumberFormatException exception) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
     }
 
@@ -179,13 +199,13 @@ public class Computa {
     private static void deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
 
         try {
             int taskNumber = Integer.parseInt(parts[1]);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new ComputaException("Please provide a valid task number.");
+                throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
             }
 
             Task deletedTask = tasks.remove(taskNumber - 1);
@@ -195,7 +215,7 @@ public class Computa {
             System.out.println("Now you have " + tasks.size() + " tasks in the list.");
             System.out.println("Not that I want to hang out with you anyway. (๑•́ ₃ •̀๑)");
         } catch (NumberFormatException exception) {
-            throw new ComputaException("Please provide a valid task number.");
+            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
         }
     }
 }

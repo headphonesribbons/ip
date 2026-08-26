@@ -4,6 +4,7 @@
 - Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/*.java`
 - Working directory: `.`
 - Timeout seconds: `10`
+- Reset files: `data/computa.txt`
 
 Each test case starts a fresh program session. Output comparison is exact apart
 from platform line endings and a final trailing newline.
@@ -28,6 +29,76 @@ ____________________________________________________________
 Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
 I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
 What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: missing data file starts with an empty list
+
+### Aim
+
+Verify that Computa creates the missing data file and starts safely with no tasks.
+
+### Inputs
+
+```text
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+We've got so much to do (⋟﹏⋞)
+Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: load valid tasks and skip corrupted records
+
+### Aim
+
+Verify that valid records are loaded while malformed records are ignored without crashing.
+
+### Setup
+
+```text
+python -c "from pathlib import Path; p=Path('data/computa.txt'); p.parent.mkdir(exist_ok=True); p.write_text('T | 1 | loaded task\nnot a valid task record\nT | 2 | invalid status\nX | 0 | unknown type\nD | 0 | missing due date |\nE | 0 | missing range |  | 4pm\nT | 0 | \nD | 0 | missing field\nE | 0 | missing field | from\nD | 0 | submit report | Friday\n', encoding='utf-8')"
+```
+
+### Inputs
+
+```text
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+We've got so much to do (⋟﹏⋞)
+Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+1.[T][X] loaded task
+2.[D][ ] submit report (by: Friday)
 ____________________________________________________________
 ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
@@ -223,13 +294,15 @@ I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-A deadline needs a description and a /by date or time.
+Hmph! A deadline needs a description and a /by date or time. 
+ Do I HAVE to help you with everything?
 ____________________________________________________________
 ____________________________________________________________
-An event needs a description, /from date or time, and /to date or time.
+Hmph! An event needs a description, /from date or time, and /to date or time. 
+ Do I HAVE to help you with everything?
 ____________________________________________________________
 ____________________________________________________________
-Please provide a valid task number.
+TOMARE!!!! Don't think you can mark tasks without doing them.
 ____________________________________________________________
 ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
@@ -263,7 +336,8 @@ I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
 What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
-A deadline needs a description and a /by date or time.
+Hmph! A deadline needs a description and a /by date or time. 
+ Do I HAVE to help you with everything?
 ____________________________________________________________
 ____________________________________________________________
 More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
@@ -272,7 +346,8 @@ Now you have 1 tasks in the list. (⋟﹏⋞)
 (.づ◡﹏◡)づ. When will we get some alone time together?
 ____________________________________________________________
 ____________________________________________________________
-An event needs a description, /from date or time, and /to date or time.
+Hmph! An event needs a description, /from date or time, and /to date or time. 
+ Do I HAVE to help you with everything?
 ____________________________________________________________
 ____________________________________________________________
 More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
@@ -325,7 +400,7 @@ Now you have 1 tasks in the list. (⋟﹏⋞)
 (.づ◡﹏◡)づ. When will we get some alone time together?
 ____________________________________________________________
 ____________________________________________________________
-Please provide a valid task number.
+TOMARE!!!! Don't think you can mark tasks without doing them.
 ____________________________________________________________
 ____________________________________________________________
 Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿) 
@@ -333,7 +408,7 @@ Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿)
   [X] read book
 ____________________________________________________________
 ____________________________________________________________
-Please provide a valid task number.
+TOMARE!!!! Don't think you can mark tasks without doing them.
 ____________________________________________________________
 ____________________________________________________________
 Gambare, Goshujin-Sama ! ˚‧º·( 。ᗒ ‸ ◕✿) 
@@ -407,7 +482,52 @@ Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄
 1.[T][ ] return book
 ____________________________________________________________
 ____________________________________________________________
-Please provide a valid task number.
+TOMARE!!!! Don't think you can mark tasks without doing them.
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: save task changes to disk
+
+### Aim
+
+Verify that adding and marking a task triggers the file-writing path while preserving the normal console behavior.
+
+### Inputs
+
+```text
+todo persist me
+mark 1
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [T][ ] persist me
+Now you have 1 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿) 
+
+  [X] persist me
+____________________________________________________________
+____________________________________________________________
+We've got so much to do (⋟﹏⋞)
+Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+1.[T][X] persist me
 ____________________________________________________________
 ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
