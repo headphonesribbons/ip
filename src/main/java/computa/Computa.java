@@ -129,12 +129,14 @@ public class Computa {
             String details = command.substring("deadline".length()).trim();
             int byIndex = details.indexOf("/by");
             if (byIndex < 0) {
-                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
+                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n"
+                        + " Do I HAVE to help you with everything?");
             }
             String description = details.substring(0, byIndex).trim();
             String by = details.substring(byIndex + "/by".length()).trim();
             if (description.isEmpty() || by.isEmpty()) {
-                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n Do I HAVE to help you with everything?");
+                throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n"
+                        + " Do I HAVE to help you with everything?");
             }
             if (DateTimeParser.looksLikeDate(by) && DateTimeParser.parse(by) == null) {
                 throw new ComputaException("Hmph! I can't understand that deadline date. Use yyyy-mm-dd.");
@@ -147,13 +149,19 @@ public class Computa {
             int fromIndex = details.indexOf("/from");
             int toIndex = details.indexOf("/to", fromIndex + 1);
             if (fromIndex < 0 || toIndex < 0) {
-                throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
+                throw new ComputaException(
+                        "Hmph! An event needs a description, /from date or time, and "
+                                + "/to date or time. \n"
+                                + " Do I HAVE to help you with everything?");
             }
             String description = details.substring(0, fromIndex).trim();
             String from = details.substring(fromIndex + "/from".length(), toIndex).trim();
             String to = details.substring(toIndex + "/to".length()).trim();
             if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                throw new ComputaException("Hmph! An event needs a description, /from date or time, and /to date or time. \n Do I HAVE to help you with everything?");
+                throw new ComputaException(
+                        "Hmph! An event needs a description, /from date or time, and "
+                                + "/to date or time. \n"
+                                + " Do I HAVE to help you with everything?");
             }
             if ((DateTimeParser.looksLikeDate(from) && DateTimeParser.parse(from) == null)
                     || (DateTimeParser.looksLikeDate(to) && DateTimeParser.parse(to) == null)) {
