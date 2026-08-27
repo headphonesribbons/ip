@@ -45,6 +45,9 @@ public final class DateTimeParser {
      * @return the parsed value, or {@code null} for a free-form value.
      */
     public static LocalDateTime parse(String text) {
+        if (text == null) {
+            return null;
+        }
         String value = text.trim();
         try {
             return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -84,11 +87,17 @@ public final class DateTimeParser {
 
     /** Returns whether a value looks like an ISO date and should not be treated as free-form text. */
     public static boolean looksLikeDate(String text) {
+        if (text == null) {
+            return false;
+        }
         return text.trim().matches("(\\d{4}-\\d{2}-\\d{2}|\\d{1,2}/\\d{1,2}/\\d{4}).*");
     }
 
     /** Parses the date used by the {@code on} command. */
     public static LocalDate parseQueryDate(String text) {
+        if (text == null) {
+            return null;
+        }
         try {
             return LocalDate.parse(text.trim(), DATE_FORMAT);
         } catch (DateTimeParseException exception) {
@@ -102,6 +111,9 @@ public final class DateTimeParser {
 
     /** Returns whether the original value contains a time component. */
     public static boolean hasTime(String text) {
+        if (text == null) {
+            return false;
+        }
         String value = text.trim();
         return value.contains("T") || value.matches("(\\d{4}-\\d{2}-\\d{2}|\\d{1,2}/\\d{1,2}/\\d{4}) \\d{2}:?\\d{2}");
     }

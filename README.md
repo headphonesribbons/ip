@@ -78,8 +78,13 @@ configured, run the following from the project root:
 .\gradlew.bat run
 ```
 
-The JUnit test task is configured by the Gradle support, but project tests will
-be added at the later `A-JUnit` increment.
+The JUnit test task is configured by the Gradle support, and the highest-value
+approximately 50% of the codebase is covered by JUnit tests. Update those tests
+after each code change and run them with:
+
+```powershell
+.\gradlew.bat test
+```
 
 ## Project structure
 

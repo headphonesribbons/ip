@@ -33,6 +33,13 @@ handing the change back to the user. If a UI test fails, stop and report the
 actual and expected output; do not silently change the expected output to make
 the test pass.
 
+## JUnit coverage after code changes
+
+Maintain JUnit tests for the highest-value approximately 50% of methods, with
+priority given to complex, core, and critical business logic. Update or add the
+relevant JUnit tests after every code change so the project continues to meet
+this coverage target, and run the Gradle test task before handing changes back.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
