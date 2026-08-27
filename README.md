@@ -94,6 +94,12 @@ The JAR is a generated binary and is intentionally excluded from Git by the
 existing `build/` ignore rule. For distribution, attach
 `build/libs/computa.jar` to a GitHub release rather than committing it.
 
+If Gradle reports `invalid source release: 25`, install JDK 25 and make sure
+Gradle can find it. The build declares a Java 25 toolchain, so an installed JDK
+25 is selected automatically. In IntelliJ IDEA, set both the project SDK and
+Gradle JVM to JDK 25 under **File → Project Structure** and **Settings → Build,
+Execution, Deployment → Build Tools → Gradle**.
+
 The JUnit test task is configured by the Gradle support, and the highest-value
 approximately 50% of the codebase is covered by JUnit tests. Update those tests
 after each code change and run them with:
