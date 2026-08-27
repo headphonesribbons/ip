@@ -68,15 +68,31 @@ python .codex\skills\test-ui\scripts\run_ui_tests.py --plan test\ui-test-plan.md
 The runner starts a fresh session for each case, prints the console transcript,
 compares actual output with the expected output, and stops at the first failure.
 
-## Running with Gradle
+## Building and running the executable JAR
 
-The Gradle wrapper automates compilation and application execution. With JDK 25
-configured, run the following from the project root:
+The Shadow plugin packages Computa and its runtime dependencies into one
+executable fat JAR. With JDK 25 configured, run this from the project root:
+
+```powershell
+.\gradlew.bat shadowJar
+```
+
+The generated file is `build/libs/computa.jar`. Copy that file into an empty
+folder, open a command window in the folder, and run:
+
+```powershell
+java -jar "computa.jar"
+```
+
+The normal build also creates the JAR because `build` depends on `shadowJar`:
 
 ```powershell
 .\gradlew.bat build
-.\gradlew.bat run
 ```
+
+The JAR is a generated binary and is intentionally excluded from Git by the
+existing `build/` ignore rule. For distribution, attach
+`build/libs/computa.jar` to a GitHub release rather than committing it.
 
 The JUnit test task is configured by the Gradle support, and the highest-value
 approximately 50% of the codebase is covered by JUnit tests. Update those tests

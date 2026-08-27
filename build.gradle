@@ -49,6 +49,15 @@ jar {
 
 shadowJar {
     archiveFileName = 'computa.jar'
+    // Keep the generated artifact directly executable with `java -jar`.
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
+
+// Include the distributable fat JAR whenever the normal build lifecycle runs.
+tasks.named('build') {
+    dependsOn tasks.named('shadowJar')
 }
 
 run {
