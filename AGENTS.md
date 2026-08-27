@@ -24,6 +24,14 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Java coding standard
+
+All Java production and test code must follow the SE-EDU basic and intermediate
+Java conventions. Use the project-specific `seedu-java-coding-standard` skill
+when reviewing or changing Java code, including checks for naming, layout,
+imports, control-flow braces, line length, and JavaDoc. Correct violations in
+the touched code before handing the change back.
+
 ## UI testing after code changes
 
 After every code update, review `test/ui-test-plan.md` and update it when the
@@ -49,3 +57,11 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+## Git commit messages
+
+All future commits must follow the SE-EDU Git conventions. Use the project-
+specific `seedu-git-standard` skill when proposing or writing commit messages:
+use a capitalized imperative subject (preferably 50 characters, no more than
+72, without a final period), and for non-trivial changes add a blank-line-
+separated body wrapped at 72 characters that explains what changed and why.
