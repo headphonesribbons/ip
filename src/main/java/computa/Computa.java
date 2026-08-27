@@ -71,6 +71,8 @@ public class Computa {
             try {
                 if (command.equals("list")) {
                     ui.showTasks(tasks);
+                } else if (command.equals("find") || command.startsWith("find ")) {
+                    findTasks(command);
                 } else if (command.equals("on") || command.startsWith("on ")) {
                     showTasksOnDate(command);
                 } else if (command.equals("mark") || command.startsWith("mark ")) {
@@ -187,6 +189,16 @@ public class Computa {
         }
 
         ui.showTasksOnDate(tasks, date);
+    }
+
+    /** Parses a find command and delegates the keyword search to the UI. */
+    private void findTasks(String command) throws ComputaException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new ComputaException("Hmph! Tell me what to find.");
+        }
+
+        ui.showTasksContaining(tasks, keyword);
     }
 
     /**
