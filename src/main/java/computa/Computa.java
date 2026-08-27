@@ -24,8 +24,11 @@ public class Computa {
     /** Relative path of the file used to store tasks. */
     private static final String FILE_PATH = "." + File.separator + "data" + File.separator + "computa.txt";
 
+    /** Reads and writes the task data file. */
     private final Storage storage;
+    /** In-memory tasks used by the current Computa session. */
     private final ArrayList<Task> tasks;
+    /** Handles user-facing console output. */
     private final Ui ui;
 
     /** Creates an empty task list and prepares its data file. */
@@ -36,6 +39,11 @@ public class Computa {
         ui = new Ui();
     }
 
+    /**
+     * Starts the interactive command loop and processes input until the user exits.
+     * Invalid commands are converted into friendly error messages while the loop
+     * continues so that one bad input does not terminate the session.
+     */
     public void run() {
         Scanner scanner = new Scanner(System.in);
 

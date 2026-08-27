@@ -2,6 +2,7 @@ package computa.command;
 
 /** Converts complete user input into a command object when it is supported. */
 public final class Parser {
+    /** Prevents instantiation of this stateless command parser. */
     private Parser() {
         // Utility class; do not instantiate.
     }
