@@ -1,4 +1,10 @@
+package computa.command;
+
 import java.util.ArrayList;
+
+import computa.storage.Storage;
+import computa.task.Task;
+import computa.ui.Ui;
 
 /** Command that ends the Computa session. */
 public class ExitCommand extends Command {

@@ -1,4 +1,11 @@
+package computa.command;
+
 import java.util.ArrayList;
+
+import computa.exception.ComputaException;
+import computa.storage.Storage;
+import computa.task.Task;
+import computa.ui.Ui;
 
 /** Represents one user command that can be executed by Computa. */
 public abstract class Command {

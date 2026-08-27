@@ -1,8 +1,21 @@
+package computa;
+
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import computa.command.Command;
+import computa.command.Parser;
+import computa.exception.ComputaException;
+import computa.storage.Storage;
+import computa.task.Deadline;
+import computa.task.Event;
+import computa.task.Task;
+import computa.task.Todo;
+import computa.ui.Ui;
+import computa.util.DateTimeParser;
 
 /**
  * A minimal chatbot that stores tasks and displays them when requested.

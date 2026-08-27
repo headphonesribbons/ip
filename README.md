@@ -51,8 +51,8 @@ From the repository root, compile and run with Java 25:
 
 ```powershell
 New-Item -ItemType Directory -Force _temp\classes | Out-Null
-javac -encoding UTF-8 -d _temp\classes src\main\java\*.java
-java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp\classes Computa
+javac -encoding UTF-8 -d _temp\classes src\main\java\computa\*.java src\main\java\computa\command\*.java src\main\java\computa\exception\*.java src\main\java\computa\storage\*.java src\main\java\computa\task\*.java src\main\java\computa\ui\*.java src\main\java\computa\util\*.java
+java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp\classes computa.Computa
 ```
 
 ## UI tests
@@ -70,16 +70,11 @@ compares actual output with the expected output, and stops at the first failure.
 
 ## Project structure
 
-- `src/main/java/Computa.java` — command loop and task management.
-- `src/main/java/Task.java` — base task class.
-- `src/main/java/Todo.java` — todo task type.
-- `src/main/java/Deadline.java` — deadline task type.
-- `src/main/java/Event.java` — event task type.
-- `src/main/java/Ui.java` — console output and user-facing messages.
-- `src/main/java/Command.java` — base type for executable commands.
-- `src/main/java/ExitCommand.java` — command that ends a session.
-- `src/main/java/Parser.java` — initial command-to-object conversion.
-- `src/main/java/Storage.java` — writes and loads the task list to disk.
-- `src/main/java/DateTimeParser.java` — parses and formats supported dates.
-- `src/main/java/ComputaException.java` — user-input error type.
+- `src/main/java/computa/Computa.java` — command loop and task management.
+- `src/main/java/computa/task/` — base and concrete task classes.
+- `src/main/java/computa/ui/Ui.java` — console output and user-facing messages.
+- `src/main/java/computa/command/` — executable commands and command parsing.
+- `src/main/java/computa/storage/Storage.java` — writes and loads the task list.
+- `src/main/java/computa/util/DateTimeParser.java` — parses and formats dates.
+- `src/main/java/computa/exception/ComputaException.java` — user-input error type.
 - `test/ui-test-plan.md` — UI test cases and expected transcripts.
