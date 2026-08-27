@@ -68,6 +68,19 @@ python .codex\skills\test-ui\scripts\run_ui_tests.py --plan test\ui-test-plan.md
 The runner starts a fresh session for each case, prints the console transcript,
 compares actual output with the expected output, and stops at the first failure.
 
+## Running with Gradle
+
+The Gradle wrapper automates compilation and application execution. With JDK 25
+configured, run the following from the project root:
+
+```powershell
+.\gradlew.bat build
+.\gradlew.bat run
+```
+
+The JUnit test task is configured by the Gradle support, but project tests will
+be added at the later `A-JUnit` increment.
+
 ## Project structure
 
 - `src/main/java/computa/Computa.java` — command loop and task management.
@@ -77,4 +90,6 @@ compares actual output with the expected output, and stops at the first failure.
 - `src/main/java/computa/storage/Storage.java` — writes and loads the task list.
 - `src/main/java/computa/util/DateTimeParser.java` — parses and formats dates.
 - `src/main/java/computa/exception/ComputaException.java` — user-input error type.
+- `build.gradle` — Gradle build and application configuration.
+- `gradlew` / `gradlew.bat` — reproducible Gradle wrapper scripts.
 - `test/ui-test-plan.md` — UI test cases and expected transcripts.

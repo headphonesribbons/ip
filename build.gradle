@@ -37,7 +37,7 @@ test {
 }
 
 application {
-    mainClass = 'seedu.duke.Duke'
+    mainClass = 'computa.Computa'
 }
 
 jar {
@@ -48,9 +48,13 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    archiveFileName = 'computa.jar'
 }
 
 run {
     standardInput = System.in
+}
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs '-Dstdout.encoding=UTF-8', '-Dstderr.encoding=UTF-8'
 }
