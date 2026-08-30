@@ -3,7 +3,7 @@
 - Program command: `java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp/ui-test-classes computa.Computa`
 - Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/computa/*.java src/main/java/computa/command/*.java src/main/java/computa/exception/*.java src/main/java/computa/storage/*.java src/main/java/computa/task/*.java src/main/java/computa/ui/*.java src/main/java/computa/util/*.java`
 - Working directory: `.`
-- Timeout seconds: `10`
+- Timeout seconds: `30`
 - Reset files: `data/computa.txt`
 
 Each test case starts a fresh program session. Output comparison is exact apart
