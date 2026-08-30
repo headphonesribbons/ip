@@ -652,3 +652,93 @@ ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
 ____________________________________________________________
 ```
+
+## Test case: find tasks by keyword
+
+### Aim
+
+Verify that `find` searches task descriptions case-insensitively and preserves
+the original task numbers in the results.
+
+### Setup
+
+```text
+python -c "from pathlib import Path; p=Path('data/computa.txt'); p.parent.mkdir(exist_ok=True); p.write_text('T | 1 | read book\nD | 1 | return book | June 6th\nT | 0 | buy bread\n', encoding='utf-8')"
+```
+
+### Inputs
+
+```text
+find BOOK
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Goshujin-Sama, can't you do this yourself?
+Hmph. I guess I have no choice.
+1.[T][X] read book
+2.[D][X] return book (by: June 6th)
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: invalid and unmatched find commands
+
+### Aim
+
+Verify that a missing keyword is rejected and a keyword with no matches does
+not display unrelated tasks or alter the session.
+
+### Inputs
+
+```text
+find
+todo read book
+find cake
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Hmph! Tell me what to find.
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [T][ ] read book
+Now you have 1 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+Goshujin-Sama, can't you do this yourself?
+Hmph. I guess I have no choice.
+No matching tasks found.
+____________________________________________________________
+____________________________________________________________
+We've got so much to do (⋟﹏⋞)
+Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
