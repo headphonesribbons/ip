@@ -1,11 +1,20 @@
+package computa.storage;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import computa.task.Deadline;
+import computa.task.Event;
+import computa.task.Task;
+import computa.task.Todo;
+import computa.util.DateTimeParser;
 
 /**
  * Stores Computa tasks in a text file.
@@ -116,10 +125,22 @@ public class Storage {
             if (parts.length != 4 || parts[3].trim().isEmpty()) {
                 return null;
             }
+            if (DateTimeParser.looksLikeDate(parts[3]) && DateTimeParser.parse(parts[3]) == null) {
+                return null;
+            }
             task = new Deadline(description, parts[3].trim());
             break;
         case "E":
             if (parts.length != 5 || parts[3].trim().isEmpty() || parts[4].trim().isEmpty()) {
+                return null;
+            }
+            if ((DateTimeParser.looksLikeDate(parts[3]) && DateTimeParser.parse(parts[3]) == null)
+                    || (DateTimeParser.looksLikeDate(parts[4]) && DateTimeParser.parse(parts[4]) == null)) {
+                return null;
+            }
+            LocalDateTime parsedFrom = DateTimeParser.parse(parts[3]);
+            LocalDateTime parsedTo = DateTimeParser.parse(parts[4]);
+            if (parsedFrom != null && parsedTo != null && parsedFrom.isAfter(parsedTo)) {
                 return null;
             }
             task = new Event(description, parts[3].trim(), parts[4].trim());

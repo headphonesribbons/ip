@@ -1,3 +1,5 @@
+package computa.exception;
+
 /**
  * Represents an input error specific to Computa.
  */

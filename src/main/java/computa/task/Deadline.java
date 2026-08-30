@@ -1,9 +1,20 @@
+package computa.task;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import computa.util.DateTimeParser;
+
 /**
  * A task that must be completed by a specified date or time.
  */
 public class Deadline extends Task {
     /** Date or time by which the task should be completed. */
-    protected String by;
+    protected LocalDateTime by;
+    /** Original text is retained when the user enters a free-form date. */
+    private final String byText;
+    /** Whether the parsed value includes a time. */
+    private final boolean hasTime;
 
     /**
      * Creates an incomplete deadline task.
@@ -13,7 +24,9 @@ public class Deadline extends Task {
      */
     public Deadline(String description, String by) {
         super(description);
-        this.by = by;
+        this.byText = by.trim();
+        this.by = DateTimeParser.parse(this.byText);
+        this.hasTime = DateTimeParser.hasTime(this.byText);
     }
 
     /**
@@ -23,7 +36,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toFileFormat() {
-        return "D" + super.toFileFormat() + " | " + this.by;
+        return "D" + super.toFileFormat() + " | " + getStorageBy();
     }
 
     /**
@@ -39,12 +52,23 @@ public class Deadline extends Task {
     /** Returns the description together with the deadline. */
     @Override
     public String getDisplayDescription() {
-        return description + " (by: " + by + ")";
+        return description + " (by: " + getBy() + ")";
     }
 
     /** Returns the deadline text. */
     public String getBy() {
-        return by;
+        return by == null ? byText : DateTimeParser.formatForDisplay(by, hasTime);
+    }
+
+    /** Returns the normalized value used when writing this deadline to disk. */
+    private String getStorageBy() {
+        return by == null ? byText : DateTimeParser.formatForStorage(by, hasTime);
+    }
+
+    /** Returns whether this deadline falls on the supplied date. */
+    @Override
+    public boolean occursOn(LocalDate date) {
+        return by != null && by.toLocalDate().equals(date);
     }
 
     /** Returns the deadline type icon. */

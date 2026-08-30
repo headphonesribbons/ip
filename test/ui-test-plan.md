@@ -1,7 +1,7 @@
 # Computa UI test plan
 
-- Program command: `java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp/ui-test-classes Computa`
-- Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/*.java`
+- Program command: `java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp/ui-test-classes computa.Computa`
+- Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/computa/*.java src/main/java/computa/command/*.java src/main/java/computa/exception/*.java src/main/java/computa/storage/*.java src/main/java/computa/task/*.java src/main/java/computa/ui/*.java src/main/java/computa/util/*.java`
 - Working directory: `.`
 - Timeout seconds: `10`
 - Reset files: `data/computa.txt`
@@ -75,7 +75,7 @@ Verify that valid records are loaded while malformed records are ignored without
 ### Setup
 
 ```text
-python -c "from pathlib import Path; p=Path('data/computa.txt'); p.parent.mkdir(exist_ok=True); p.write_text('T | 1 | loaded task\nnot a valid task record\nT | 2 | invalid status\nX | 0 | unknown type\nD | 0 | missing due date |\nE | 0 | missing range |  | 4pm\nT | 0 | \nD | 0 | missing field\nE | 0 | missing field | from\nD | 0 | submit report | Friday\n', encoding='utf-8')"
+python -c "from pathlib import Path; p=Path('data/computa.txt'); p.parent.mkdir(exist_ok=True); p.write_text('T | 1 | loaded task\nnot a valid task record\nT | 2 | invalid status\nX | 0 | unknown type\nD | 0 | missing due date |\nD | 0 | impossible due date | 2019-02-30\nE | 0 | missing range |  | 4pm\nE | 0 | impossible range | 2020-01-02 | 2020-01-01\nT | 0 | \nD | 0 | missing field\nE | 0 | missing field | from\nD | 0 | submit report | Friday\nD | 0 | stored date | 2019-10-15\n', encoding='utf-8')"
 ```
 
 ### Inputs
@@ -99,6 +99,7 @@ We've got so much to do (⋟﹏⋞)
 Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][X] loaded task
 2.[D][ ] submit report (by: Friday)
+3.[D][ ] stored date (by: Oct 15 2019)
 ____________________________________________________________
 ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
@@ -228,6 +229,124 @@ We've got so much to do (⋟﹏⋞)
 Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[D][ ] return book (by: Sunday)
 2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: parse and query ISO dates
+
+### Aim
+
+Verify that ISO dates and date-times are parsed, displayed in a readable format,
+and found by the date query command.
+
+### Inputs
+
+```text
+deadline submit report /by 2019-10-15
+event project meeting /from 2019-10-15 1400 /to 2019-10-15 1600
+event orientation /from 2019-10-14 /to 2019-10-16
+deadline submit form /by 2/12/2019 1800
+on 2019-10-15
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [D][ ] submit report (by: Oct 15 2019)
+Now you have 1 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [E][ ] project meeting (from: Oct 15 2019 1400 to: Oct 15 2019 1600)
+Now you have 2 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [E][ ] orientation (from: Oct 14 2019 to: Oct 16 2019)
+Now you have 3 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [D][ ] submit form (by: Dec 02 2019 1800)
+Now you have 4 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+Tasks on Oct 15 2019:
+1.[D][ ] submit report (by: Oct 15 2019)
+2.[E][ ] project meeting (from: Oct 15 2019 1400 to: Oct 15 2019 1600)
+3.[E][ ] orientation (from: Oct 14 2019 to: Oct 16 2019)
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
+## Test case: invalid dates and date queries are rejected
+
+### Aim
+
+Verify that impossible ISO dates and malformed date queries do not add tasks or
+alter the task list.
+
+### Inputs
+
+```text
+deadline bad /by 2019-02-30
+event bad /from 2019-10-15 /to 2019-99-99
+event backwards /from 2020-01-02 /to 2020-01-01
+deadline good /by 2020-01-01
+on tomorrow
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Hmph! I can't understand that deadline date. Use yyyy-mm-dd.
+____________________________________________________________
+____________________________________________________________
+Hmph! I can't understand that event date. Use yyyy-mm-dd.
+____________________________________________________________
+____________________________________________________________
+Hmph! An event cannot end before it starts.
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [D][ ] good (by: Jan 01 2020)
+Now you have 1 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+Hmph! Enter a date in yyyy-mm-dd format.
+____________________________________________________________
+____________________________________________________________
+We've got so much to do (⋟﹏⋞)
+Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+1.[D][ ] good (by: Jan 01 2020)
 ____________________________________________________________
 ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
