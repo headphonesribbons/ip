@@ -115,38 +115,38 @@ public class Storage {
 
         Task task;
         switch (parts[0].trim()) {
-        case "T":
-            if (parts.length != 3) {
+            case "T":
+                if (parts.length != 3) {
+                    return null;
+                }
+                task = new Todo(description);
+                break;
+            case "D":
+                if (parts.length != 4 || parts[3].trim().isEmpty()) {
+                    return null;
+                }
+                if (DateTimeParser.looksLikeDate(parts[3]) && DateTimeParser.parse(parts[3]) == null) {
+                    return null;
+                }
+                task = new Deadline(description, parts[3].trim());
+                break;
+            case "E":
+                if (parts.length != 5 || parts[3].trim().isEmpty() || parts[4].trim().isEmpty()) {
+                    return null;
+                }
+                if ((DateTimeParser.looksLikeDate(parts[3]) && DateTimeParser.parse(parts[3]) == null)
+                        || (DateTimeParser.looksLikeDate(parts[4]) && DateTimeParser.parse(parts[4]) == null)) {
+                    return null;
+                }
+                LocalDateTime parsedFrom = DateTimeParser.parse(parts[3]);
+                LocalDateTime parsedTo = DateTimeParser.parse(parts[4]);
+                if (parsedFrom != null && parsedTo != null && parsedFrom.isAfter(parsedTo)) {
+                    return null;
+                }
+                task = new Event(description, parts[3].trim(), parts[4].trim());
+                break;
+            default:
                 return null;
-            }
-            task = new Todo(description);
-            break;
-        case "D":
-            if (parts.length != 4 || parts[3].trim().isEmpty()) {
-                return null;
-            }
-            if (DateTimeParser.looksLikeDate(parts[3]) && DateTimeParser.parse(parts[3]) == null) {
-                return null;
-            }
-            task = new Deadline(description, parts[3].trim());
-            break;
-        case "E":
-            if (parts.length != 5 || parts[3].trim().isEmpty() || parts[4].trim().isEmpty()) {
-                return null;
-            }
-            if ((DateTimeParser.looksLikeDate(parts[3]) && DateTimeParser.parse(parts[3]) == null)
-                    || (DateTimeParser.looksLikeDate(parts[4]) && DateTimeParser.parse(parts[4]) == null)) {
-                return null;
-            }
-            LocalDateTime parsedFrom = DateTimeParser.parse(parts[3]);
-            LocalDateTime parsedTo = DateTimeParser.parse(parts[4]);
-            if (parsedFrom != null && parsedTo != null && parsedFrom.isAfter(parsedTo)) {
-                return null;
-            }
-            task = new Event(description, parts[3].trim(), parts[4].trim());
-            break;
-        default:
-            return null;
         }
 
         if (parts[1].equals("1")) {
