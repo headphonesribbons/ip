@@ -1,13 +1,35 @@
 # Computa UI test plan
 
 - Program command: `java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp/ui-test-classes computa.Computa`
-- Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/computa/*.java src/main/java/computa/command/*.java src/main/java/computa/exception/*.java src/main/java/computa/storage/*.java src/main/java/computa/task/*.java src/main/java/computa/ui/*.java src/main/java/computa/util/*.java`
+- Build command: `javac -encoding UTF-8 -d _temp/ui-test-classes src/main/java/computa/Computa.java src/main/java/computa/command/*.java src/main/java/computa/exception/*.java src/main/java/computa/storage/*.java src/main/java/computa/task/*.java src/main/java/computa/ui/Ui.java src/main/java/computa/util/*.java`
 - Working directory: `.`
 - Timeout seconds: `30`
 - Reset files: `data/computa.txt`
 
 Each test case starts a fresh program session. Output comparison is exact apart
 from platform line endings and a final trailing newline.
+
+## Manual test case: JavaFX chatbot GUI
+
+### Aim
+
+Verify that the JavaFX window starts through the separate launcher and supports
+entering commands, displaying responses, and ending the session.
+
+### Inputs
+
+```text
+todo read book
+list
+bye
+```
+
+### Expected output
+
+The window is titled `Computa`, shows the greeting in the conversation area, and
+displays the entered commands and chatbot responses. The `list` response shows
+`1.[T][ ] read book`; after `bye`, the farewell is shown and the command controls
+are disabled.
 
 ## Test case: exit immediately
 

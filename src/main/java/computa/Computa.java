@@ -33,10 +33,29 @@ public class Computa {
 
     /** Creates an empty task list and prepares its data file. */
     public Computa() {
-        storage = new Storage(FILE_PATH);
+        this(new Storage(FILE_PATH), new Ui());
+    }
+
+    /**
+     * Creates a chatbot that sends responses to the supplied UI.
+     *
+     * @param ui receiver for chatbot responses.
+     */
+    public Computa(Ui ui) {
+        this(new Storage(FILE_PATH), ui);
+    }
+
+    /**
+     * Creates a chatbot using the supplied storage and UI collaborators.
+     *
+     * @param storage source and destination for task data.
+     * @param ui receiver for chatbot responses.
+     */
+    Computa(Storage storage, Ui ui) {
+        this.storage = storage;
         storage.initialiseDataFile();
         tasks = storage.loadTasks();
-        ui = new Ui();
+        this.ui = ui;
     }
 
     /**
@@ -47,58 +66,75 @@ public class Computa {
     public void run() {
         Scanner scanner = new Scanner(System.in);
 
-        ui.showGreeting();
+        startSession();
 
         while (scanner.hasNextLine()) {
-            String command = scanner.nextLine();
-            ui.showSeparator();
-
-            Command parsedCommand = Parser.parse(command);
-            if (parsedCommand != null) {
-                try {
-                    parsedCommand.execute(tasks, ui, storage);
-                } catch (ComputaException exception) {
-                    ui.showError(exception.getMessage());
-                }
-                if (parsedCommand.isExit()) {
-                    ui.showSeparator();
-                    break;
-                }
-                ui.showSeparator();
-                continue;
+            if (!processCommand(scanner.nextLine())) {
+                break;
             }
+        }
+    }
 
+    /** Displays the greeting for a new console or GUI session. */
+    public void startSession() {
+        ui.showGreeting();
+    }
+
+    /**
+     * Processes one complete command and returns whether the session should continue.
+     *
+     * @param command complete line entered by the user.
+     * @return false only after the exit command is processed.
+     */
+    public boolean processCommand(String command) {
+        ui.showSeparator();
+
+        Command parsedCommand = Parser.parse(command);
+        if (parsedCommand != null) {
             try {
-                if (command.equals("list")) {
-                    ui.showTasks(tasks);
-                } else if (command.equals("find") || command.startsWith("find ")) {
-                    findTasks(command);
-                } else if (command.equals("on") || command.startsWith("on ")) {
-                    showTasksOnDate(command);
-                } else if (command.equals("mark") || command.startsWith("mark ")) {
-                    Task updatedTask = updateTaskStatus(command, tasks, true);
-                    storage.saveTasks(tasks);
-                    ui.showStatusUpdate(updatedTask, true);
-                } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-                    Task updatedTask = updateTaskStatus(command, tasks, false);
-                    storage.saveTasks(tasks);
-                    ui.showStatusUpdate(updatedTask, false);
-                } else if (command.equals("delete") || command.startsWith("delete ")) {
-                    Task deletedTask = deleteTask(command, tasks);
-                    storage.saveTasks(tasks);
-                    ui.showDeletedTask(deletedTask, tasks.size());
-                } else {
-                    Task newTask = createTask(command);
-                    tasks.add(newTask);
-                    storage.saveTasks(tasks);
-                    ui.showAddedTask(newTask, tasks.size());
-                }
+                parsedCommand.execute(tasks, ui, storage);
             } catch (ComputaException exception) {
                 ui.showError(exception.getMessage());
             }
-
+            if (parsedCommand.isExit()) {
+                ui.showSeparator();
+                return false;
+            }
             ui.showSeparator();
+            return true;
         }
+
+        try {
+            if (command.equals("list")) {
+                ui.showTasks(tasks);
+            } else if (command.equals("find") || command.startsWith("find ")) {
+                findTasks(command);
+            } else if (command.equals("on") || command.startsWith("on ")) {
+                showTasksOnDate(command);
+            } else if (command.equals("mark") || command.startsWith("mark ")) {
+                Task updatedTask = updateTaskStatus(command, tasks, true);
+                storage.saveTasks(tasks);
+                ui.showStatusUpdate(updatedTask, true);
+            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+                Task updatedTask = updateTaskStatus(command, tasks, false);
+                storage.saveTasks(tasks);
+                ui.showStatusUpdate(updatedTask, false);
+            } else if (command.equals("delete") || command.startsWith("delete ")) {
+                Task deletedTask = deleteTask(command, tasks);
+                storage.saveTasks(tasks);
+                ui.showDeletedTask(deletedTask, tasks.size());
+            } else {
+                Task newTask = createTask(command);
+                tasks.add(newTask);
+                storage.saveTasks(tasks);
+                ui.showAddedTask(newTask, tasks.size());
+            }
+        } catch (ComputaException exception) {
+            ui.showError(exception.getMessage());
+        }
+
+        ui.showSeparator();
+        return true;
     }
 
     /**

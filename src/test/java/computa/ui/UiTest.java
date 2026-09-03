@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,5 +63,15 @@ class UiTest {
 
         assertTrue(output.contains("No matching tasks found."));
         assertFalse(output.contains("read book"));
+    }
+
+    @Test
+    void showGreeting_customOutputReceiver_receivesGreetingLines() {
+        List<String> output = new ArrayList<>();
+
+        new Ui(output::add).showGreeting();
+
+        assertTrue(output.stream().anyMatch(line -> line.contains("COMPUTA")));
+        assertTrue(output.stream().anyMatch(line -> line.contains("What can I do for you?")));
     }
 }
