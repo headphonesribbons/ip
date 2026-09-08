@@ -54,6 +54,7 @@ public class Storage {
      * @param tasks tasks to write.
      */
     public void saveTasks(ArrayList<Task> tasks) {
+        assert tasks != null : "Task list must be provided";
         initialiseDataFile();
         try (BufferedWriter writer = Files.newBufferedWriter(new File(filePath).toPath(), StandardCharsets.UTF_8)) {
             for (Task task : tasks) {
