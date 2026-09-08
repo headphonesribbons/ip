@@ -9,6 +9,8 @@ import java.nio.file.InvalidPathException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import computa.task.Deadline;
 import computa.task.Event;
@@ -80,12 +82,10 @@ public class Storage {
                 return loadedTasks;
             }
             List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-            for (String line : lines) {
-                Task task = parseTask(line);
-                if (task != null) {
-                    loadedTasks.add(task);
-                }
-            }
+            loadedTasks.addAll(lines.stream()
+                    .map(this::parseTask)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
         } catch (IOException | InvalidPathException | SecurityException exception) {
             // Return the valid records collected so far when the file cannot be read completely.
         }
