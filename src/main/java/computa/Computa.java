@@ -52,9 +52,12 @@ public class Computa {
      * @param ui receiver for chatbot responses.
      */
     Computa(Storage storage, Ui ui) {
+        assert storage != null : "Storage collaborator must be provided";
+        assert ui != null : "UI collaborator must be provided";
         this.storage = storage;
         storage.initialiseDataFile();
         tasks = storage.loadTasks();
+        assert tasks != null : "Storage must return a task list";
         this.ui = ui;
     }
 
@@ -87,6 +90,7 @@ public class Computa {
      * @return false only after the exit command is processed.
      */
     public boolean processCommand(String command) {
+        assert command != null : "A command line must be provided";
         ui.showSeparator();
 
         Command parsedCommand = Parser.parse(command);
