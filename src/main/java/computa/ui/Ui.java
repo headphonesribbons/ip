@@ -2,8 +2,11 @@ package computa.ui;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import computa.task.Task;
 import computa.util.DateTimeParser;
@@ -76,16 +79,13 @@ public class Ui {
         printLine("Hmph. I guess I have no choice.");
 
         String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
-        int matchingTaskCount = 0;
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            String description = task.getDescription().toLowerCase(Locale.ROOT);
-            if (description.contains(normalizedKeyword)) {
-                matchingTaskCount++;
-                printLine((i + 1) + "." + task);
-            }
-        }
-        if (matchingTaskCount == 0) {
+        List<Integer> matchingTaskIndexes = IntStream.range(0, tasks.size())
+                .filter(index -> tasks.get(index).getDescription().toLowerCase(Locale.ROOT)
+                        .contains(normalizedKeyword))
+                .boxed()
+                .collect(Collectors.toList());
+        matchingTaskIndexes.forEach(index -> printLine((index + 1) + "." + tasks.get(index)));
+        if (matchingTaskIndexes.isEmpty()) {
             printLine("No matching tasks found.");
         }
     }
@@ -93,14 +93,12 @@ public class Ui {
     /** Prints deadlines and events that occur on the requested date. */
     public void showTasksOnDate(ArrayList<Task> tasks, LocalDate date) {
         printLine("Tasks on " + DateTimeParser.formatDateForDisplay(date) + ":");
-        int matchingTaskNumber = 0;
-        for (Task task : tasks) {
-            if (task.occursOn(date)) {
-                matchingTaskNumber++;
-                printLine(matchingTaskNumber + "." + task);
-            }
-        }
-        if (matchingTaskNumber == 0) {
+        List<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.occursOn(date))
+                .collect(Collectors.toList());
+        IntStream.range(0, matchingTasks.size())
+                .forEach(index -> printLine((index + 1) + "." + matchingTasks.get(index)));
+        if (matchingTasks.isEmpty()) {
             printLine("No deadlines or events found.");
         }
     }
