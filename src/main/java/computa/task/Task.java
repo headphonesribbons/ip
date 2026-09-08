@@ -1,6 +1,7 @@
 package computa.task;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents one task in Computa's in-memory task list.
@@ -86,6 +87,15 @@ public class Task {
      */
     public boolean occursOn(LocalDate date) {
         return false;
+    }
+
+    /**
+     * Returns the date used to order this task, if it has a parsed date.
+     *
+     * @return the task's sort date, or {@code null} when it has no parsed date.
+     */
+    public LocalDateTime getSortDate() {
+        return null;
     }
 
     /**

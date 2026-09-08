@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 
 import computa.command.Command;
@@ -114,6 +115,10 @@ public class Computa {
         try {
             if (command.equals("list")) {
                 ui.showTasks(tasks);
+            } else if (command.equals("sort")) {
+                sortTasks();
+                storage.saveTasks(tasks);
+                ui.showSortedTasks(tasks);
             } else if (isCommand(command, "find")) {
                 findTasks(command);
             } else if (isCommand(command, "on")) {
@@ -242,6 +247,12 @@ public class Computa {
         }
 
         ui.showTasksContaining(tasks, keyword);
+    }
+
+    /** Sorts dated tasks chronologically and places tasks without parsed dates last. */
+    private void sortTasks() {
+        tasks.sort(Comparator.comparing(Task::getSortDate,
+                Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
     /**

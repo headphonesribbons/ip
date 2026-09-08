@@ -40,4 +40,23 @@ class ComputaTest {
 
         assertTrue(output.stream().anyMatch(line -> line.contains("Noooo don't go")));
     }
+
+    @Test
+    void processCommand_sort_ordersDatedTasksBeforeUndatedTasks() {
+        ArrayList<String> output = new ArrayList<>();
+        Storage storage = new Storage(temporaryDirectory.resolve("tasks.txt").toString());
+        Computa computa = new Computa(storage, new Ui(output::add));
+
+        computa.processCommand("deadline later /by 2020-01-10");
+        computa.processCommand("todo buy milk");
+        computa.processCommand("deadline sooner /by 2020-01-01");
+        computa.processCommand("sort");
+
+        int soonerIndex = output.indexOf("1.[D][ ] sooner (by: Jan 01 2020)");
+        int laterIndex = output.indexOf("2.[D][ ] later (by: Jan 10 2020)");
+        int todoIndex = output.indexOf("3.[T][ ] buy milk");
+        assertTrue(output.contains("Tasks sorted by date."));
+        assertTrue(soonerIndex >= 0 && soonerIndex < laterIndex);
+        assertTrue(laterIndex < todoIndex);
+    }
 }

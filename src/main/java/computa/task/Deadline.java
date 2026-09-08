@@ -71,6 +71,12 @@ public class Deadline extends Task {
         return by != null && by.toLocalDate().equals(date);
     }
 
+    /** Returns the parsed due date used when sorting tasks. */
+    @Override
+    public LocalDateTime getSortDate() {
+        return by;
+    }
+
     /** Returns the deadline type icon. */
     @Override
     public String getTypeIcon() {
