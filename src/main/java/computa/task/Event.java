@@ -84,6 +84,12 @@ public class Event extends Task {
                 && !date.isBefore(from.toLocalDate()) && !date.isAfter(to.toLocalDate());
     }
 
+    /** Returns the parsed start date used when sorting tasks. */
+    @Override
+    public LocalDateTime getSortDate() {
+        return from;
+    }
+
     /** Returns the normalized start value used when writing this event to disk. */
     private String getStorageFrom() {
         return from == null ? fromText : DateTimeParser.formatForStorage(from, fromHasTime);

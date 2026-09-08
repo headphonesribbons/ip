@@ -57,6 +57,63 @@ Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test case: sort tasks by date
+
+### Aim
+
+Verify that the sort command orders dated tasks chronologically and places an
+undated todo after them.
+
+### Inputs
+
+```text
+deadline later /by 2020-01-10
+todo buy milk
+deadline sooner /by 2020-01-01
+sort
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [D][ ] later (by: Jan 10 2020)
+Now you have 1 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [T][ ] buy milk
+Now you have 2 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [D][ ] sooner (by: Jan 01 2020)
+Now you have 3 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+Tasks sorted by date.
+We've got so much to do (⋟﹏⋞)
+Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+1.[D][ ] sooner (by: Jan 01 2020)
+2.[D][ ] later (by: Jan 10 2020)
+3.[T][ ] buy milk
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test case: missing data file starts with an empty list
 
 ### Aim

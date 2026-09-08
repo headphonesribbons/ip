@@ -64,6 +64,12 @@ public class Ui {
         }
     }
 
+    /** Prints the acknowledgement and the task list after sorting. */
+    public void showSortedTasks(ArrayList<Task> tasks) {
+        printLine("Tasks sorted by date.");
+        showTasks(tasks);
+    }
+
     /** Prints tasks whose descriptions contain the supplied keyword, ignoring case. */
     public void showTasksContaining(ArrayList<Task> tasks, String keyword) {
         printLine("Goshujin-Sama, can't you do this yourself?");
