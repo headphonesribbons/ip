@@ -24,6 +24,9 @@ import computa.util.DateTimeParser;
 public class Computa {
     /** Relative path of the file used to store tasks. */
     private static final String FILE_PATH = "." + File.separator + "data" + File.separator + "computa.txt";
+    /** Error shown when a task number is missing or outside the current task list. */
+    private static final String INVALID_TASK_NUMBER_MESSAGE =
+            "TOMARE!!!! Don't think you can mark tasks without doing them.";
 
     /** Reads and writes the task data file. */
     private final Storage storage;
@@ -116,19 +119,19 @@ public class Computa {
                 sortTasks();
                 storage.saveTasks(tasks);
                 ui.showSortedTasks(tasks);
-            } else if (command.equals("find") || command.startsWith("find ")) {
+            } else if (isCommand(command, "find")) {
                 findTasks(command);
-            } else if (command.equals("on") || command.startsWith("on ")) {
+            } else if (isCommand(command, "on")) {
                 showTasksOnDate(command);
-            } else if (command.equals("mark") || command.startsWith("mark ")) {
+            } else if (isCommand(command, "mark")) {
                 Task updatedTask = updateTaskStatus(command, tasks, true);
                 storage.saveTasks(tasks);
                 ui.showStatusUpdate(updatedTask, true);
-            } else if (command.equals("unmark") || command.startsWith("unmark ")) {
+            } else if (isCommand(command, "unmark")) {
                 Task updatedTask = updateTaskStatus(command, tasks, false);
                 storage.saveTasks(tasks);
                 ui.showStatusUpdate(updatedTask, false);
-            } else if (command.equals("delete") || command.startsWith("delete ")) {
+            } else if (isCommand(command, "delete")) {
                 Task deletedTask = deleteTask(command, tasks);
                 storage.saveTasks(tasks);
                 ui.showDeletedTask(deletedTask, tasks.size());
@@ -163,7 +166,7 @@ public class Computa {
      * @throws ComputaException if the command is malformed or unknown.
      */
     private static Task createTask(String command) throws ComputaException {
-        if (command.equals("todo") || command.startsWith("todo ")) {
+        if (isCommand(command, "todo")) {
             String description = command.substring("todo".length()).trim();
             if (description.isEmpty()) {
                 throw new ComputaException("Hmph! This is just an excuse to hang out with me, right?\n"
@@ -172,7 +175,7 @@ public class Computa {
             return new Todo(description);
         }
 
-        if (command.equals("deadline") || command.startsWith("deadline ")) {
+        if (isCommand(command, "deadline")) {
             String details = command.substring("deadline".length()).trim();
             int byIndex = details.indexOf("/by");
             if (byIndex < 0) {
@@ -191,7 +194,7 @@ public class Computa {
             return new Deadline(description, by);
         }
 
-        if (command.equals("event") || command.startsWith("event ")) {
+        if (isCommand(command, "event")) {
             String details = command.substring("event".length()).trim();
             int fromIndex = details.indexOf("/from");
             int toIndex = details.indexOf("/to", fromIndex + 1);
@@ -263,13 +266,13 @@ public class Computa {
             throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
+            throw new ComputaException(INVALID_TASK_NUMBER_MESSAGE);
         }
 
         try {
             int taskNumber = Integer.parseInt(parts[1]);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
+                throw new ComputaException(INVALID_TASK_NUMBER_MESSAGE);
             }
 
             int taskIndex = taskNumber - 1;
@@ -281,7 +284,7 @@ public class Computa {
             }
             return task;
         } catch (NumberFormatException exception) {
-            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
+            throw new ComputaException(INVALID_TASK_NUMBER_MESSAGE);
         }
     }
 
@@ -295,18 +298,23 @@ public class Computa {
     private static Task deleteTask(String command, ArrayList<Task> tasks) throws ComputaException {
         String[] parts = command.trim().split("\\s+");
         if (parts.length != 2) {
-            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
+            throw new ComputaException(INVALID_TASK_NUMBER_MESSAGE);
         }
 
         try {
             int taskNumber = Integer.parseInt(parts[1]);
             if (taskNumber < 1 || taskNumber > tasks.size()) {
-                throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
+                throw new ComputaException(INVALID_TASK_NUMBER_MESSAGE);
             }
 
             return tasks.remove(taskNumber - 1);
         } catch (NumberFormatException exception) {
-            throw new ComputaException("TOMARE!!!! Don't think you can mark tasks without doing them.");
+            throw new ComputaException(INVALID_TASK_NUMBER_MESSAGE);
         }
+    }
+
+    /** Returns whether a command is exactly the keyword or starts with its argument separator. */
+    private static boolean isCommand(String command, String keyword) {
+        return command.equals(keyword) || command.startsWith(keyword + " ");
     }
 }
