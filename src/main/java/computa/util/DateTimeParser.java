@@ -49,30 +49,14 @@ public final class DateTimeParser {
             return null;
         }
         String value = text.trim();
-        try {
-            return LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        } catch (DateTimeParseException exception) {
-            // Try the other supported formats below.
-        }
-        try {
-            return LocalDateTime.parse(value, COMPACT_TIME_FORMAT);
-        } catch (DateTimeParseException exception) {
-            // Try the colon-separated and date-only formats below.
-        }
-        try {
-            return LocalDateTime.parse(value, COLON_TIME_FORMAT);
-        } catch (DateTimeParseException exception) {
-            // Try the day/month/year formats below.
-        }
-        try {
-            return LocalDateTime.parse(value, SLASH_COMPACT_TIME_FORMAT);
-        } catch (DateTimeParseException exception) {
-            // Try the remaining day/month/year formats below.
-        }
-        try {
-            return LocalDateTime.parse(value, SLASH_COLON_TIME_FORMAT);
-        } catch (DateTimeParseException exception) {
-            // Try a date-only value below.
+        LocalDateTime parsedDateTime = parseDateTime(value,
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME,
+                COMPACT_TIME_FORMAT,
+                COLON_TIME_FORMAT,
+                SLASH_COMPACT_TIME_FORMAT,
+                SLASH_COLON_TIME_FORMAT);
+        if (parsedDateTime != null) {
+            return parsedDateTime;
         }
         try {
             return LocalDate.parse(value, DATE_FORMAT).atStartOfDay();
@@ -83,6 +67,24 @@ public final class DateTimeParser {
                 return null;
             }
         }
+    }
+
+    /**
+     * Tries the supplied date-time formatters in order until one succeeds.
+     *
+     * @param value trimmed date-time text.
+     * @param formatters ordered fallback formatters.
+     * @return the parsed date-time, or {@code null} if all formatters reject it.
+     */
+    private static LocalDateTime parseDateTime(String value, DateTimeFormatter... formatters) {
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                return LocalDateTime.parse(value, formatter);
+            } catch (DateTimeParseException exception) {
+                // Try the next formatter.
+            }
+        }
+        return null;
     }
 
     /** Returns whether a value looks like an ISO date and should not be treated as free-form text. */

@@ -11,13 +11,13 @@ import computa.util.DateTimeParser;
 public class Event extends Task {
     /** Date or time when the event starts. */
     protected LocalDateTime from;
+    /** Date or time when the event ends. */
+    protected LocalDateTime to;
+
     /** Original start text for free-form values. */
     private final String fromText;
     /** Whether the parsed start value includes a time. */
     private final boolean fromHasTime;
-
-    /** Date or time when the event ends. */
-    protected LocalDateTime to;
     /** Original end text for free-form values. */
     private final String toText;
     /** Whether the parsed end value includes a time. */
