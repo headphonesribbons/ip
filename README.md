@@ -11,6 +11,7 @@ completion status, deletion, and friendly handling of invalid input.
 - Events with free-form or ISO start and end dates/times.
 - Human-readable formatting and date queries for parsed ISO dates.
 - List tasks with their type and completion status.
+- Sort dated tasks chronologically.
 - Mark and unmark tasks.
 - Delete tasks by their list number.
 - Handle malformed or unknown commands without crashing.
@@ -27,6 +28,7 @@ Malformed records are skipped so corrupted data does not prevent startup.
 | `deadline <description> /by <date/time>` | `deadline submit report /by Friday` | Add a deadline. |
 | `event <description> /from <start> /to <end>` | `event project meeting /from Mon 2pm /to 4pm` | Add an event. |
 | `list` | `list` | Display all tasks. |
+| `sort` | `sort` | Display dated tasks in chronological order. |
 | `on <yyyy-mm-dd>` | `on 2019-10-15` | Display deadlines and events occurring on a date. |
 | `mark <number>` | `mark 1` | Mark a task as completed. |
 | `unmark <number>` | `unmark 1` | Mark a task as incomplete. |
@@ -42,8 +44,9 @@ deadlines and events; events match every date from their start through end date.
 
 ## Running in IntelliJ IDEA
 
-Use JDK 25 and open this repository as an IntelliJ IDEA project. Then open
-`src/main/java/Computa.java` and run `Computa.main()`.
+Use JDK 25 and open this repository as a Gradle project. To launch the chat
+window, run `computa.Launcher`. To use the terminal interface, run
+`computa.Computa` instead.
 
 ## Running from a terminal
 
@@ -53,6 +56,12 @@ From the repository root, compile and run with Java 25:
 New-Item -ItemType Directory -Force _temp\classes | Out-Null
 javac -encoding UTF-8 -d _temp\classes src\main\java\computa\*.java src\main\java\computa\command\*.java src\main\java\computa\exception\*.java src\main\java\computa\storage\*.java src\main\java\computa\task\*.java src\main\java\computa\ui\*.java src\main\java\computa\util\*.java
 java "-Dstdout.encoding=UTF-8" "-Dstderr.encoding=UTF-8" -cp _temp\classes computa.Computa
+```
+
+To launch the JavaFX chat window from PowerShell, run:
+
+```powershell
+.\run-gui.ps1
 ```
 
 ## UI tests

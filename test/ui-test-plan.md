@@ -13,8 +13,10 @@ from platform line endings and a final trailing newline.
 
 ### Aim
 
-Verify that the JavaFX window starts through the separate launcher and supports
-entering commands, displaying responses, and ending the session.
+Verify that the JavaFX window starts through the separate launcher and presents
+user commands as right-aligned bubbles and chatbot responses as left-aligned
+bubbles. Confirm that it supports entering commands, displaying responses, and
+ending the session.
 
 ### Inputs
 
