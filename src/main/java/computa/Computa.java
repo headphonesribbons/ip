@@ -96,8 +96,14 @@ public class Computa {
     public boolean processCommand(String command) {
         assert command != null : "A command line must be provided";
         ui.showSeparator();
+        String normalizedCommand = command.trim();
+        if (normalizedCommand.isEmpty()) {
+            ui.showError("Hmph! Enter a command so I know how to help you.");
+            ui.showSeparator();
+            return true;
+        }
 
-        Command parsedCommand = Parser.parse(command);
+        Command parsedCommand = Parser.parse(normalizedCommand);
         if (parsedCommand != null) {
             try {
                 parsedCommand.execute(tasks, ui, storage);
@@ -113,30 +119,30 @@ public class Computa {
         }
 
         try {
-            if (command.equals("list")) {
+            if (normalizedCommand.equals("list")) {
                 ui.showTasks(tasks);
-            } else if (command.equals("sort")) {
+            } else if (normalizedCommand.equals("sort")) {
                 sortTasks();
                 storage.saveTasks(tasks);
                 ui.showSortedTasks(tasks);
-            } else if (isCommand(command, "find")) {
-                findTasks(command);
-            } else if (isCommand(command, "on")) {
-                showTasksOnDate(command);
-            } else if (isCommand(command, "mark")) {
-                Task updatedTask = updateTaskStatus(command, tasks, true);
+            } else if (isCommand(normalizedCommand, "find")) {
+                findTasks(normalizedCommand);
+            } else if (isCommand(normalizedCommand, "on")) {
+                showTasksOnDate(normalizedCommand);
+            } else if (isCommand(normalizedCommand, "mark")) {
+                Task updatedTask = updateTaskStatus(normalizedCommand, tasks, true);
                 storage.saveTasks(tasks);
                 ui.showStatusUpdate(updatedTask, true);
-            } else if (isCommand(command, "unmark")) {
-                Task updatedTask = updateTaskStatus(command, tasks, false);
+            } else if (isCommand(normalizedCommand, "unmark")) {
+                Task updatedTask = updateTaskStatus(normalizedCommand, tasks, false);
                 storage.saveTasks(tasks);
                 ui.showStatusUpdate(updatedTask, false);
-            } else if (isCommand(command, "delete")) {
-                Task deletedTask = deleteTask(command, tasks);
+            } else if (isCommand(normalizedCommand, "delete")) {
+                Task deletedTask = deleteTask(normalizedCommand, tasks);
                 storage.saveTasks(tasks);
                 ui.showDeletedTask(deletedTask, tasks.size());
             } else {
-                Task newTask = createTask(command);
+                Task newTask = createTask(normalizedCommand);
                 tasks.add(newTask);
                 storage.saveTasks(tasks);
                 ui.showAddedTask(newTask, tasks.size());
@@ -178,7 +184,7 @@ public class Computa {
         if (isCommand(command, "deadline")) {
             String details = command.substring("deadline".length()).trim();
             int byIndex = details.indexOf("/by");
-            if (byIndex < 0) {
+            if (byIndex < 0 || byIndex != details.lastIndexOf("/by")) {
                 throw new ComputaException("Hmph! A deadline needs a description and a /by date or time. \n"
                         + " Do I HAVE to help you with everything?");
             }
@@ -197,8 +203,9 @@ public class Computa {
         if (isCommand(command, "event")) {
             String details = command.substring("event".length()).trim();
             int fromIndex = details.indexOf("/from");
-            int toIndex = details.indexOf("/to", fromIndex + 1);
-            if (fromIndex < 0 || toIndex < 0) {
+            int toIndex = details.indexOf("/to");
+            if (fromIndex < 0 || toIndex < 0 || fromIndex >= toIndex
+                    || fromIndex != details.lastIndexOf("/from") || toIndex != details.lastIndexOf("/to")) {
                 throw new ComputaException(
                         "Hmph! An event needs a description, /from date or time, and "
                                 + "/to date or time. \n"
@@ -219,8 +226,8 @@ public class Computa {
             }
             LocalDateTime parsedFrom = DateTimeParser.parse(from);
             LocalDateTime parsedTo = DateTimeParser.parse(to);
-            if (parsedFrom != null && parsedTo != null && parsedFrom.isAfter(parsedTo)) {
-                throw new ComputaException("Hmph! An event cannot end before it starts.");
+            if (parsedFrom != null && parsedTo != null && !parsedFrom.isBefore(parsedTo)) {
+                throw new ComputaException("Hmph! An event must end after it starts.");
             }
             return new Event(description, from, to);
         }
@@ -315,6 +322,7 @@ public class Computa {
 
     /** Returns whether a command is exactly the keyword or starts with its argument separator. */
     private static boolean isCommand(String command, String keyword) {
-        return command.equals(keyword) || command.startsWith(keyword + " ");
+        return command.equals(keyword) || (command.startsWith(keyword)
+                && command.length() > keyword.length() && Character.isWhitespace(command.charAt(keyword.length())));
     }
 }

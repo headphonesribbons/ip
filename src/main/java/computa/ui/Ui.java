@@ -32,18 +32,23 @@ public class Ui {
         this.output = output;
     }
 
-    /** Sends one line to the configured output receiver. */
+    /** Sends one complete chatbot message to the configured output receiver. */
     private void printLine(String line) {
         output.accept(line);
     }
 
+    /** Joins related lines into one message so GUI output is not needlessly fragmented. */
+    private void printMessage(String... lines) {
+        printLine(String.join("\n", lines));
+    }
+
     /** Prints Computa's greeting. */
     public void showGreeting() {
-        printLine(SEPARATOR);
-        printLine("                         COMPUTA");
-        printLine("Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°");
-        printLine("I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)");
-        printLine("What can I do for you?");
+        showSeparator();
+        printMessage("                         COMPUTA",
+                "Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°",
+                "I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)",
+                "What can I do for you?");
         showSeparator();
     }
 
@@ -59,12 +64,14 @@ public class Ui {
 
     /** Prints all tasks and their completion status. */
     public void showTasks(ArrayList<Task> tasks) {
-        printLine("We've got so much to do (⋟﹏⋞)");
-        printLine("Hmph! I guess I'll have to spend more time with you "
+        ArrayList<String> taskMessageLines = new ArrayList<>();
+        taskMessageLines.add("We've got so much to do (⋟﹏⋞)");
+        taskMessageLines.add("I guess I'll have to spend more time with you "
                 + "(⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)");
         for (int i = 0; i < tasks.size(); i++) {
-            printLine((i + 1) + "." + tasks.get(i));
+            taskMessageLines.add((i + 1) + "." + tasks.get(i));
         }
+        printLine(String.join("\n", taskMessageLines));
     }
 
     /** Prints the acknowledgement and the task list after sorting. */

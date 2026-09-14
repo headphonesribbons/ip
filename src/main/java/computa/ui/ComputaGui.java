@@ -10,14 +10,24 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 /** Provides a JavaFX interface for interacting with Computa. */
 public class ComputaGui extends Application {
+    /** Resource path of Computa's chat avatar. */
+    private static final String BOT_AVATAR_PATH = "/images/computa-avatar.png";
+    /** Resource path of the user's chat avatar. */
+    private static final String USER_AVATAR_PATH = "/images/user-avatar.png";
+    /** Diameter used for each circular chat avatar. */
+    private static final double AVATAR_SIZE = 38;
+
     /** Chat feed containing the user and chatbot message bubbles. */
     private VBox conversation;
     /** Scroll container that keeps the newest chat bubble visible. */
@@ -26,6 +36,10 @@ public class ComputaGui extends Application {
     private TextField commandInput;
     /** Button that submits the current command. */
     private Button sendButton;
+    /** Avatar shown beside chatbot responses. */
+    private Image botAvatar;
+    /** Avatar shown beside user messages. */
+    private Image userAvatar;
     /** Chatbot instance shared by all commands in this window. */
     private Computa computa;
 
@@ -36,30 +50,40 @@ public class ComputaGui extends Application {
      */
     @Override
     public void start(Stage stage) {
+        botAvatar = loadAvatar(BOT_AVATAR_PATH);
+        userAvatar = loadAvatar(USER_AVATAR_PATH);
         conversation = createConversationView();
         conversationScrollPane = new ScrollPane(conversation);
+        conversation.heightProperty().addListener((observable, oldHeight, newHeight) -> scrollToLatestMessage());
         conversationScrollPane.setFitToWidth(true);
         conversationScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         conversationScrollPane.setStyle("-fx-background: #f5f7fb; -fx-background-color: #f5f7fb;");
         commandInput = new TextField();
         commandInput.setPromptText("Enter a command, e.g. todo read a book");
+        commandInput.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12;"
+                + " -fx-border-color: #e8bfd1; -fx-border-radius: 12; -fx-padding: 9 12 9 12;"
+                + " -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;");
         commandInput.setOnAction(event -> submitCommand());
 
         sendButton = new Button("Send");
         sendButton.setDefaultButton(true);
+        sendButton.setStyle("-fx-background-color: #df7ea8; -fx-text-fill: white; -fx-font-weight: bold;"
+                + " -fx-font-family: 'Segoe UI'; -fx-background-radius: 12; -fx-padding: 9 16 9 16;");
         sendButton.setOnAction(event -> submitCommand());
 
         HBox commandBar = new HBox(8, commandInput, sendButton);
         HBox.setHgrow(commandInput, Priority.ALWAYS);
 
         Label title = new Label("COMPUTA");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        title.setStyle("-fx-font-family: Georgia; -fx-font-size: 25px; -fx-font-weight: bold;"
+                + " -fx-text-fill: #8b3f64;");
         Label subtitle = new Label("Your personal task chatbot");
-        subtitle.setStyle("-fx-text-fill: #666666;");
+        subtitle.setStyle("-fx-font-family: 'Segoe UI'; -fx-text-fill: #805469;");
         VBox header = new VBox(2, title, subtitle);
 
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(16));
+        root.setStyle("-fx-background-color: #fff9fc;");
         root.setTop(header);
         root.setCenter(conversationScrollPane);
         root.setBottom(commandBar);
@@ -79,7 +103,7 @@ public class ComputaGui extends Application {
         VBox chatFeed = new VBox(10);
         chatFeed.setPadding(new Insets(14));
         chatFeed.setFillWidth(true);
-        chatFeed.setStyle("-fx-background-color: #f5f7fb;");
+        chatFeed.setStyle("-fx-background-color: #fff3f8;");
         return chatFeed;
     }
 
@@ -88,7 +112,7 @@ public class ComputaGui extends Application {
         if (line.startsWith("____")) {
             return;
         }
-        appendBubble(line, false);
+        appendBubble(line, false, isErrorMessage(line));
     }
 
     /** Sends the current input to Computa and disables controls after exit. */
@@ -98,7 +122,7 @@ public class ComputaGui extends Application {
             return;
         }
 
-        appendBubble(command, true);
+        appendBubble(command, true, false);
         commandInput.clear();
         boolean shouldContinue = computa.processCommand(command);
         if (!shouldContinue) {
@@ -108,21 +132,68 @@ public class ComputaGui extends Application {
     }
 
     /** Adds a left-aligned chatbot bubble or right-aligned user bubble. */
-    private void appendBubble(String text, boolean isUserMessage) {
+    private void appendBubble(String text, boolean isUserMessage, boolean isErrorMessage) {
         Label bubble = new Label(text);
         bubble.setWrapText(true);
-        bubble.setMaxWidth(520);
-        bubble.setStyle(isUserMessage
-                ? "-fx-background-color: #d8ebff; -fx-background-radius: 16;"
-                        + " -fx-padding: 10 14 10 14; -fx-font-size: 14px;"
-                : "-fx-background-color: #ffffff; -fx-background-radius: 16;"
-                        + " -fx-border-color: #e1e5ee; -fx-border-radius: 16;"
-                        + " -fx-padding: 10 14 10 14; -fx-font-size: 14px;");
+        bubble.maxWidthProperty().bind(conversationScrollPane.widthProperty().multiply(0.72));
+        bubble.setStyle(getBubbleStyle(isUserMessage, isErrorMessage));
 
-        HBox bubbleRow = new HBox(bubble);
+        ImageView avatar = createAvatar(isUserMessage);
+        HBox bubbleRow = isUserMessage
+                ? new HBox(8, bubble, avatar)
+                : new HBox(8, avatar, bubble);
         bubbleRow.setMaxWidth(Double.MAX_VALUE);
         bubbleRow.setAlignment(isUserMessage ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
         conversation.getChildren().add(bubbleRow);
-        Platform.runLater(() -> conversationScrollPane.setVvalue(1.0));
+        scrollToLatestMessage();
+    }
+
+    /** Scrolls after JavaFX lays out a newly added message so the latest response remains visible. */
+    private void scrollToLatestMessage() {
+        Platform.runLater(() -> {
+            conversationScrollPane.applyCss();
+            conversationScrollPane.layout();
+            conversationScrollPane.setVvalue(1.0);
+        });
+    }
+
+    /** Returns the style for a user, chatbot, or invalid-command message bubble. */
+    private String getBubbleStyle(boolean isUserMessage, boolean isErrorMessage) {
+        if (isUserMessage) {
+            return "-fx-background-color: #f5b6d1; -fx-background-radius: 18;"
+                    + " -fx-border-color: #e78ab6; -fx-border-radius: 18;"
+                    + " -fx-padding: 10 14 10 14; -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;"
+                    + " -fx-text-fill: #4d2035;";
+        }
+        if (isErrorMessage) {
+            return "-fx-background-color: #fff0f0; -fx-background-radius: 16;"
+                    + " -fx-border-color: #d9534f; -fx-border-radius: 16;"
+                    + " -fx-padding: 10 14 10 14; -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;"
+                    + " -fx-text-fill: #8a1c1c;";
+        }
+        return "-fx-background-color: #ffffff; -fx-background-radius: 18;"
+                + " -fx-border-color: #efd9e5; -fx-border-radius: 18;"
+                + " -fx-padding: 10 14 10 14; -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;"
+                + " -fx-text-fill: #442b38;";
+    }
+
+    /** Loads a bundled avatar image for use in chat rows. */
+    private Image loadAvatar(String resourcePath) {
+        return new Image(ComputaGui.class.getResource(resourcePath).toExternalForm());
+    }
+
+    /** Creates a clipped, circular avatar that corresponds to the message sender. */
+    private ImageView createAvatar(boolean isUserMessage) {
+        ImageView avatar = new ImageView(isUserMessage ? userAvatar : botAvatar);
+        avatar.setFitWidth(AVATAR_SIZE);
+        avatar.setFitHeight(AVATAR_SIZE);
+        avatar.setPreserveRatio(true);
+        avatar.setClip(new Circle(AVATAR_SIZE / 2, AVATAR_SIZE / 2, AVATAR_SIZE / 2));
+        return avatar;
+    }
+
+    /** Returns whether a response is an invalid-command message that should stand out visually. */
+    private boolean isErrorMessage(String message) {
+        return message.startsWith("Hmph!") || message.startsWith("TOMARE!");
     }
 }

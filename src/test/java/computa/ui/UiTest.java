@@ -1,5 +1,6 @@
 package computa.ui;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -71,7 +72,22 @@ class UiTest {
 
         new Ui(output::add).showGreeting();
 
-        assertTrue(output.stream().anyMatch(line -> line.contains("COMPUTA")));
-        assertTrue(output.stream().anyMatch(line -> line.contains("What can I do for you?")));
+        assertEquals(3, output.size());
+        assertTrue(output.get(1).contains("COMPUTA"));
+        assertTrue(output.get(1).contains("What can I do for you?"));
+    }
+
+    @Test
+    void showTasks_normalListMessage_doesNotUseTheErrorPrefix() {
+        List<String> output = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
+        tasks.add(new Todo("read book"));
+
+        new Ui(output::add).showTasks(tasks);
+
+        assertEquals(1, output.size());
+        assertTrue(output.get(0).contains("I guess I'll have to spend more time with you"));
+        assertTrue(output.get(0).contains("1.[T][ ] read book"));
+        assertFalse(output.get(0).contains("Hmph! I guess I'll have to spend more time with you"));
     }
 }

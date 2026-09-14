@@ -15,8 +15,12 @@ from platform line endings and a final trailing newline.
 
 Verify that the JavaFX window starts through the separate launcher and presents
 user commands as right-aligned bubbles and chatbot responses as left-aligned
-bubbles. Confirm that it supports entering commands, displaying responses, and
-ending the session.
+bubbles. Confirm that user messages use pink bubbles with the user avatar,
+chatbot responses use a white bubble with Computa's avatar, and invalid-command
+replies have a red outline and pale red background. Confirm that conversation
+bubbles reflow when the window is resized, and the
+window scrolls to the newest message when the conversation exceeds its height.
+Confirm that it supports entering commands, displaying responses, and ending the session.
 
 ### Inputs
 
@@ -30,8 +34,14 @@ bye
 
 The window is titled `Computa`, shows the greeting in the conversation area, and
 displays the entered commands and chatbot responses. The `list` response shows
-`1.[T][ ] read book`; after `bye`, the farewell is shown and the command controls
-are disabled.
+`1.[T][ ] read book`; user bubbles are pink and display the user avatar, while
+Computa's white response bubbles display its avatar. An invalid command produces
+a pale red, red-outlined response bubble. After `bye`, the farewell is shown and
+the command controls are disabled. Resizing the window does not clip message text or show a horizontal
+scroll bar. After entering enough commands to exceed the conversation height,
+the newest message is visible without manual scrolling.
+The greeting and all lines from a `list` response each appear in one chatbot
+bubble rather than as separate bubbles.
 
 ## Test case: exit immediately
 
@@ -106,7 +116,7 @@ ____________________________________________________________
 ____________________________________________________________
 Tasks sorted by date.
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[D][ ] sooner (by: Jan 01 2020)
 2.[D][ ] later (by: Jan 10 2020)
 3.[T][ ] buy milk
@@ -140,7 +150,7 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 ____________________________________________________________
 ____________________________________________________________
 Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
@@ -177,7 +187,7 @@ What can I do for you?
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][X] loaded task
 2.[D][ ] submit report (by: Friday)
 3.[D][ ] stored date (by: Oct 15 2019)
@@ -222,7 +232,7 @@ Now you have 1 tasks in the list. (⋟﹏⋞)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
@@ -261,7 +271,7 @@ Now you have 1 tasks in the list. (⋟﹏⋞)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][ ] borrow book
 ____________________________________________________________
 ____________________________________________________________
@@ -307,7 +317,7 @@ Now you have 2 tasks in the list. (⋟﹏⋞)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[D][ ] return book (by: Sunday)
 2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
 ____________________________________________________________
@@ -413,7 +423,7 @@ ____________________________________________________________
 Hmph! I can't understand that event date. Use yyyy-mm-dd.
 ____________________________________________________________
 ____________________________________________________________
-Hmph! An event cannot end before it starts.
+Hmph! An event must end after it starts.
 ____________________________________________________________
 ____________________________________________________________
 More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
@@ -426,7 +436,7 @@ Hmph! Enter a date in yyyy-mm-dd format.
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[D][ ] good (by: Jan 01 2020)
 ____________________________________________________________
 ____________________________________________________________
@@ -557,7 +567,7 @@ Now you have 2 tasks in the list. (⋟﹏⋞)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[D][ ] report (by: Friday)
 2.[E][ ] meeting (from: 2pm to: 3pm)
 ____________________________________________________________
@@ -617,7 +627,7 @@ Gambare, Goshujin-Sama ! ˚‧º·( 。ᗒ ‸ ◕✿)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________
@@ -666,7 +676,7 @@ Now you have 2 tasks in the list. (⋟﹏⋞)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][ ] read book
 2.[T][ ] return book
 ____________________________________________________________
@@ -678,7 +688,7 @@ Not that I want to hang out with you anyway. (๑•́ ₃ •̀๑)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][ ] return book
 ____________________________________________________________
 ____________________________________________________________
@@ -726,7 +736,7 @@ Yatta! (ᗒᗨᗕ) I knew you could do it (✧ᴗ✧✿)
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][X] persist me
 ____________________________________________________________
 ____________________________________________________________
@@ -816,7 +826,7 @@ No matching tasks found.
 ____________________________________________________________
 ____________________________________________________________
 We've got so much to do (⋟﹏⋞)
-Hmph! I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
 1.[T][ ] read book
 ____________________________________________________________
 ____________________________________________________________

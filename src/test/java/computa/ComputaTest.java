@@ -52,11 +52,34 @@ class ComputaTest {
         computa.processCommand("deadline sooner /by 2020-01-01");
         computa.processCommand("sort");
 
-        int soonerIndex = output.indexOf("1.[D][ ] sooner (by: Jan 01 2020)");
-        int laterIndex = output.indexOf("2.[D][ ] later (by: Jan 10 2020)");
-        int todoIndex = output.indexOf("3.[T][ ] buy milk");
+        String sortedTaskMessage = output.stream()
+                .filter(line -> line.contains("1.[D][ ] sooner (by: Jan 01 2020)"))
+                .findFirst()
+                .orElseThrow();
+        int soonerIndex = sortedTaskMessage.indexOf("1.[D][ ] sooner (by: Jan 01 2020)");
+        int laterIndex = sortedTaskMessage.indexOf("2.[D][ ] later (by: Jan 10 2020)");
+        int todoIndex = sortedTaskMessage.indexOf("3.[T][ ] buy milk");
         assertTrue(output.contains("Tasks sorted by date."));
         assertTrue(soonerIndex >= 0 && soonerIndex < laterIndex);
         assertTrue(laterIndex < todoIndex);
+    }
+
+    @Test
+    void processCommand_extraSpacesAndRepeatedParameters_handlesInputSafely() {
+        ArrayList<String> output = new ArrayList<>();
+        Storage storage = new Storage(temporaryDirectory.resolve("tasks.txt").toString());
+        Computa computa = new Computa(storage, new Ui(output::add));
+
+        assertTrue(computa.processCommand("  todo   read book  "));
+        assertTrue(computa.processCommand("deadline report /by Monday /by Tuesday"));
+        assertTrue(computa.processCommand("event meeting /to 2020-01-01 /from 2020-01-01"));
+        assertTrue(computa.processCommand("event review /from 2020-01-01 /to 2020-01-01"));
+        assertTrue(computa.processCommand("list"));
+
+        assertTrue(output.stream().anyMatch(line -> line.contains("1.[T][ ] read book")));
+        assertTrue(output.stream().anyMatch(line -> line.contains("A deadline needs a description")));
+        assertTrue(output.stream().anyMatch(line -> line.contains("An event needs a description")));
+        assertTrue(output.contains("Hmph! An event must end after it starts."));
+        assertFalse(output.stream().anyMatch(line -> line.contains("2.[")));
     }
 }
