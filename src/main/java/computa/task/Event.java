@@ -67,6 +67,13 @@ public class Event extends Task {
         return description + " (from: " + getFrom() + " to: " + getTo() + ")";
     }
 
+    /** Returns whether another event has the same start and end date or time. */
+    @Override
+    protected boolean hasSameSchedule(Task other) {
+        Event otherEvent = (Event) other;
+        return getFrom().equals(otherEvent.getFrom()) && getTo().equals(otherEvent.getTo());
+    }
+
     /** Returns the event start text. */
     public String getFrom() {
         return from == null ? fromText : DateTimeParser.formatForDisplay(from, fromHasTime);

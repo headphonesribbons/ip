@@ -27,6 +27,9 @@ public class Computa {
     /** Error shown when a task number is missing or outside the current task list. */
     private static final String INVALID_TASK_NUMBER_MESSAGE =
             "TOMARE!!!! Don't think you can mark tasks without doing them.";
+    /** Error shown when the user attempts to add an existing task again. */
+    private static final String DUPLICATE_TASK_MESSAGE =
+            "Hmph! You already have that task on your list. No need to overwork yourself!";
 
     /** Reads and writes the task data file. */
     private final Storage storage;
@@ -143,6 +146,9 @@ public class Computa {
                 ui.showDeletedTask(deletedTask, tasks.size());
             } else {
                 Task newTask = createTask(normalizedCommand);
+                if (hasDuplicateTask(newTask)) {
+                    throw new ComputaException(DUPLICATE_TASK_MESSAGE);
+                }
                 tasks.add(newTask);
                 storage.saveTasks(tasks);
                 ui.showAddedTask(newTask, tasks.size());
@@ -233,6 +239,16 @@ public class Computa {
         }
 
         throw new ComputaException("Hmph! Making small talk won't get you anywhere.  ʕ ꈍᴥꈍʔ");
+    }
+
+    /**
+     * Checks whether the current list already contains a task with matching details.
+     *
+     * @param newTask task that the user is attempting to add.
+     * @return true when a task with the same type, description, and schedule exists.
+     */
+    private boolean hasDuplicateTask(Task newTask) {
+        return tasks.stream().anyMatch(existingTask -> existingTask.hasSameDetails(newTask));
     }
 
     /** Parses a date query and delegates its display to the UI. */

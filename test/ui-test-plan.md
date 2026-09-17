@@ -240,6 +240,49 @@ Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test case: duplicate tasks are rejected
+
+### Aim
+
+Verify that adding an identical task shows an error without adding a second copy.
+
+### Inputs
+
+```text
+todo read book
+todo read book
+list
+bye
+```
+
+### Expected output
+
+```text
+____________________________________________________________
+                         COMPUTA
+Konnichiwassup! °˖✧◝(⁰▿⁰)◜✧˖°
+I'm your personal Computa ｡:ﾟ(｡ﹷ ‸ ﹷ ✿)
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+More work? Don't overwork yourself, Goshujin-Sama ໒( ⇀ ‸ ↼ )७
+  [T][ ] read book
+Now you have 1 tasks in the list. (⋟﹏⋞)
+(.づ◡﹏◡)づ. When will we get some alone time together?
+____________________________________________________________
+____________________________________________________________
+Hmph! You already have that task on your list. No need to overwork yourself!
+____________________________________________________________
+____________________________________________________________
+We've got so much to do (⋟﹏⋞)
+I guess I'll have to spend more time with you (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)
+1.[T][ ] read book
+____________________________________________________________
+____________________________________________________________
+Noooo don't go!!! Hmph. Fine... Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test case: add and list a todo
 
 ### Aim

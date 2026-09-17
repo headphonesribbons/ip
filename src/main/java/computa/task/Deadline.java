@@ -55,6 +55,13 @@ public class Deadline extends Task {
         return description + " (by: " + getBy() + ")";
     }
 
+    /** Returns whether another deadline has the same due date or time. */
+    @Override
+    protected boolean hasSameSchedule(Task other) {
+        Deadline otherDeadline = (Deadline) other;
+        return getBy().equals(otherDeadline.getBy());
+    }
+
     /** Returns the deadline text. */
     public String getBy() {
         return by == null ? byText : DateTimeParser.formatForDisplay(by, hasTime);

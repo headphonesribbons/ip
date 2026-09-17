@@ -82,4 +82,19 @@ class ComputaTest {
         assertTrue(output.contains("Hmph! An event must end after it starts."));
         assertFalse(output.stream().anyMatch(line -> line.contains("2.[")));
     }
+
+    @Test
+    void processCommand_duplicateTask_rejectsDuplicateAndPreservesTaskList() {
+        ArrayList<String> output = new ArrayList<>();
+        Storage storage = new Storage(temporaryDirectory.resolve("tasks.txt").toString());
+        Computa computa = new Computa(storage, new Ui(output::add));
+
+        computa.processCommand("todo read book");
+        computa.processCommand("todo read book");
+        computa.processCommand("list");
+
+        assertTrue(output.stream().anyMatch(line -> line.contains("already have that task")));
+        assertTrue(output.stream().anyMatch(line -> line.contains("1.[T][ ] read book")));
+        assertFalse(output.stream().anyMatch(line -> line.contains("2.[T][ ] read book")));
+    }
 }

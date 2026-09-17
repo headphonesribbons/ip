@@ -27,6 +27,10 @@ public class ComputaGui extends Application {
     private static final String USER_AVATAR_PATH = "/images/user-avatar.png";
     /** Diameter used for each circular chat avatar. */
     private static final double AVATAR_SIZE = 38;
+    /** Widely available font used throughout the chat interface. */
+    private static final String CHAT_FONT_FAMILY = "Arial";
+    /** Readable font size shared by message bubbles. */
+    private static final String BUBBLE_FONT_SIZE = "15px";
 
     /** Chat feed containing the user and chatbot message bubbles. */
     private VBox conversation;
@@ -60,15 +64,16 @@ public class ComputaGui extends Application {
         conversationScrollPane.setStyle("-fx-background: #f5f7fb; -fx-background-color: #f5f7fb;");
         commandInput = new TextField();
         commandInput.setPromptText("Enter a command, e.g. todo read a book");
-        commandInput.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 12;"
-                + " -fx-border-color: #e8bfd1; -fx-border-radius: 12; -fx-padding: 9 12 9 12;"
-                + " -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;");
+        commandInput.setStyle("-fx-background-color: #fffdfd; -fx-background-radius: 18;"
+                + " -fx-border-color: #e7b8d1; -fx-border-radius: 18; -fx-padding: 10 14 10 14;"
+                + " -fx-font-family: " + CHAT_FONT_FAMILY + "; -fx-font-size: " + BUBBLE_FONT_SIZE + ";");
         commandInput.setOnAction(event -> submitCommand());
 
         sendButton = new Button("Send");
         sendButton.setDefaultButton(true);
-        sendButton.setStyle("-fx-background-color: #df7ea8; -fx-text-fill: white; -fx-font-weight: bold;"
-                + " -fx-font-family: 'Segoe UI'; -fx-background-radius: 12; -fx-padding: 9 16 9 16;");
+        sendButton.setStyle("-fx-background-color: #e68db8; -fx-text-fill: white; -fx-font-weight: bold;"
+                + " -fx-font-family: " + CHAT_FONT_FAMILY + "; -fx-background-radius: 18;"
+                + " -fx-padding: 10 18 10 18; -fx-effect: dropshadow(gaussian, #d89bb7, 5, 0.2, 0, 2);");
         sendButton.setOnAction(event -> submitCommand());
 
         HBox commandBar = new HBox(8, commandInput, sendButton);
@@ -78,7 +83,7 @@ public class ComputaGui extends Application {
         title.setStyle("-fx-font-family: Georgia; -fx-font-size: 25px; -fx-font-weight: bold;"
                 + " -fx-text-fill: #8b3f64;");
         Label subtitle = new Label("Your personal task chatbot");
-        subtitle.setStyle("-fx-font-family: 'Segoe UI'; -fx-text-fill: #805469;");
+        subtitle.setStyle("-fx-font-family: " + CHAT_FONT_FAMILY + "; -fx-text-fill: #805469;");
         VBox header = new VBox(2, title, subtitle);
 
         BorderPane root = new BorderPane();
@@ -160,21 +165,24 @@ public class ComputaGui extends Application {
     /** Returns the style for a user, chatbot, or invalid-command message bubble. */
     private String getBubbleStyle(boolean isUserMessage, boolean isErrorMessage) {
         if (isUserMessage) {
-            return "-fx-background-color: #f5b6d1; -fx-background-radius: 18;"
-                    + " -fx-border-color: #e78ab6; -fx-border-radius: 18;"
-                    + " -fx-padding: 10 14 10 14; -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;"
-                    + " -fx-text-fill: #4d2035;";
+            return "-fx-background-color: #ffd8eb; -fx-background-radius: 22;"
+                    + " -fx-border-color: #ed9fc8; -fx-border-radius: 22;"
+                    + " -fx-padding: 11 16 11 16; -fx-font-family: " + CHAT_FONT_FAMILY
+                    + "; -fx-font-size: " + BUBBLE_FONT_SIZE + "; -fx-text-fill: #5b2441;"
+                    + " -fx-effect: dropshadow(gaussian, #e9b8cf, 4, 0.18, 0, 2);";
         }
         if (isErrorMessage) {
-            return "-fx-background-color: #fff0f0; -fx-background-radius: 16;"
-                    + " -fx-border-color: #d9534f; -fx-border-radius: 16;"
-                    + " -fx-padding: 10 14 10 14; -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;"
-                    + " -fx-text-fill: #8a1c1c;";
+            return "-fx-background-color: #fff0f2; -fx-background-radius: 22;"
+                    + " -fx-border-color: #e78091; -fx-border-radius: 22;"
+                    + " -fx-padding: 11 16 11 16; -fx-font-family: " + CHAT_FONT_FAMILY
+                    + "; -fx-font-size: " + BUBBLE_FONT_SIZE + "; -fx-text-fill: #8a1c3d;"
+                    + " -fx-effect: dropshadow(gaussian, #f0bdc7, 4, 0.18, 0, 2);";
         }
-        return "-fx-background-color: #ffffff; -fx-background-radius: 18;"
-                + " -fx-border-color: #efd9e5; -fx-border-radius: 18;"
-                + " -fx-padding: 10 14 10 14; -fx-font-family: 'Segoe UI'; -fx-font-size: 14px;"
-                + " -fx-text-fill: #442b38;";
+        return "-fx-background-color: #fffaff; -fx-background-radius: 22;"
+                + " -fx-border-color: #e7c6e8; -fx-border-radius: 22;"
+                + " -fx-padding: 11 16 11 16; -fx-font-family: " + CHAT_FONT_FAMILY
+                + "; -fx-font-size: " + BUBBLE_FONT_SIZE + "; -fx-text-fill: #50384f;"
+                + " -fx-effect: dropshadow(gaussian, #e9d4e9, 4, 0.18, 0, 2);";
     }
 
     /** Loads a bundled avatar image for use in chat rows. */

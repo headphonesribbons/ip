@@ -80,6 +80,32 @@ public class Task {
     }
 
     /**
+     * Returns whether another task has the same type, description, and schedule.
+     * Completion status is intentionally ignored so a completed task cannot be
+     * added again as an incomplete duplicate.
+     *
+     * @param other task to compare with this task.
+     * @return true when both tasks represent the same task details.
+     */
+    public boolean hasSameDetails(Task other) {
+        return other != null
+                && getClass().equals(other.getClass())
+                && description.equals(other.description)
+                && hasSameSchedule(other);
+    }
+
+    /**
+     * Returns whether another task of the same type has the same schedule.
+     * Tasks without dates have no extra schedule details to compare.
+     *
+     * @param other task of the same type.
+     * @return true when the schedule details match.
+     */
+    protected boolean hasSameSchedule(Task other) {
+        return true;
+    }
+
+    /**
      * Checks whether this task occurs on a date. ToDos have no date, so they never match.
      *
      * @param date date to check.
