@@ -10,10 +10,15 @@ easy to spot.
 
 ## Quick start
 
-1. Start Computa.
-2. Add a task with `todo read the project brief`.
-3. Type `list` to see all tasks.
-4. Type `bye` when you are finished.
+1. Download the JAR that matches your computer:
+   - Windows: `computa-windows.jar`
+   - Intel Mac: `computa-mac.jar`
+   - Apple Silicon Mac: `computa-mac-arm64.jar`
+   - Linux: `computa-linux.jar`
+2. Start Computa with `java -jar JAR_FILE_NAME`.
+3. Add a task with `todo read the project brief`.
+4. Type `list` to see all tasks.
+5. Type `bye` when you are finished.
 
 All commands ignore leading and trailing spaces. Task numbers shown by `list`
 start at 1.

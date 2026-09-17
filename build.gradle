@@ -5,6 +5,8 @@ plugins {
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 checkstyle {
     toolVersion = '11.0.0'
 }
@@ -22,22 +24,26 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    javafxWindows
+    javafxMac
+    javafxMacArm64
+    javafxLinux
+}
+
 dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '17.0.7'
+    List<String> javaFxModules = ['base', 'graphics', 'controls', 'fxml']
 
-    implementation("org.openjfx:javafx-base:${javaFxVersion}:win")
-    implementation("org.openjfx:javafx-base:${javaFxVersion}:mac")
-    implementation("org.openjfx:javafx-base:${javaFxVersion}:linux")
-    implementation("org.openjfx:javafx-controls:${javaFxVersion}:win")
-    implementation("org.openjfx:javafx-controls:${javaFxVersion}:mac")
-    implementation("org.openjfx:javafx-controls:${javaFxVersion}:linux")
-    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:win")
-    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:mac")
-    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:linux")
-    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:win")
-    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:mac")
-    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:linux")
+    javaFxModules.each { module ->
+        compileOnly("org.openjfx:javafx-${module}:${javaFxVersion}:win")
+        runtimeOnly("org.openjfx:javafx-${module}:${javaFxVersion}:win")
+        add('javafxWindows', "org.openjfx:javafx-${module}:${javaFxVersion}:win")
+        add('javafxMac', "org.openjfx:javafx-${module}:${javaFxVersion}:mac")
+        add('javafxMacArm64', "org.openjfx:javafx-${module}:${javaFxVersion}:mac-aarch64")
+        add('javafxLinux', "org.openjfx:javafx-${module}:${javaFxVersion}:linux")
+    }
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
 
@@ -71,16 +77,42 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'computa.jar'
+    archiveFileName = 'computa-windows.jar'
+    configurations = [project.configurations.javafxWindows]
     // Keep the generated artifact directly executable with `java -jar`.
     manifest {
         attributes 'Main-Class': application.mainClass.get()
     }
 }
 
+/** Configures a platform-specific executable JAR with matching JavaFX native libraries. */
+def configurePlatformJar = { ShadowJar task, String configurationName, String archiveName ->
+    task.archiveFileName = archiveName
+    task.from sourceSets.main.output
+    task.configurations = [project.configurations[configurationName]]
+    task.manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
+
+tasks.register('shadowJarMac', ShadowJar) {
+    configurePlatformJar(delegate, 'javafxMac', 'computa-mac.jar')
+}
+
+tasks.register('shadowJarMacArm64', ShadowJar) {
+    configurePlatformJar(delegate, 'javafxMacArm64', 'computa-mac-arm64.jar')
+}
+
+tasks.register('shadowJarLinux', ShadowJar) {
+    configurePlatformJar(delegate, 'javafxLinux', 'computa-linux.jar')
+}
+
 // Include the distributable fat JAR whenever the normal build lifecycle runs.
 tasks.named('build') {
     dependsOn tasks.named('shadowJar')
+    dependsOn tasks.named('shadowJarMac')
+    dependsOn tasks.named('shadowJarMacArm64')
+    dependsOn tasks.named('shadowJarLinux')
 }
 
 run {
